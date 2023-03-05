@@ -1,0 +1,7 @@
+"0","bl_combined_simonly_average =  combined_simonly %>%
+  filter(Subject == 0) %>%
+  group_by(Occurrence) %>%
+  summarise(BL = mean(as.numeric(Correct)))
+"
+"2","`summarise()` ungrouping output (override with `.groups` argument)
+"

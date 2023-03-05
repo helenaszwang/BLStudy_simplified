@@ -1,0 +1,7 @@
+"0","sum_PO = rtdf %>%
+  dplyr::group_by(Position, Block) %>%
+  dplyr::summarise(mean = mean(RT), CI = confidence_interval(RT)) %>%
+  pivot_wider(names_from = 'Block', values_from = c('mean', 'CI'))
+"
+"2","Error in eval(lhs, parent, parent) : object 'rtdf' not found
+"

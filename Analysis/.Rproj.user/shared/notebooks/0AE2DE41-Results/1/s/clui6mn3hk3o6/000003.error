@@ -1,0 +1,1 @@
+{"frames":[{"func":"ggplot(sum_PO, aes(x = Position, y = mean, color = Block, group = Block))","file":"","line_number":0,"end_line_number":0,"character_number":0,"end_character_number":0}],"message":"Error in ggplot(sum_PO, aes(x = Position, y = mean, color = Block, group = Block)) : \n  object 'sum_PO' not found\n"}

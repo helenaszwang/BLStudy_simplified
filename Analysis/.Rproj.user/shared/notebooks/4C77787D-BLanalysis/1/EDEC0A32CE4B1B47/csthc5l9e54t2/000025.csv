@@ -1,0 +1,14 @@
+"0","ggplot(data = filter(orig.sl, Subject < 14), aes(x = """", y = AFC, fill = Type)) +
+  #geom_boxplot(fill='white', width=.5) +
+  geom_dotplot(binaxis = ""y"", stackdir = ""centerwhole"", aes(fill = Type)) +
+  #scale_fill_manual(values = c(""black"", ""white"",""light grey"")) +
+  theme_bw(base_size = 12) +
+  #theme(legend.position = (""none"")) +
+  ylab(""Mean accuracy"") +
+  xlab("""") +
+  ggtitle(""C"") +
+  scale_y_continuous(labels = scales::number_format(accuracy = 0.1,
+                                 decimal.mark = '.'))
+"
+"2","Bin width defaults to 1/30 of the range of the data. Pick better value with `binwidth`.
+"

@@ -1,0 +1,3 @@
+"0","ggsave(""Plots/WMSTDSC.png"", dev='png', dpi=300, height=2.5, width=2.5, units=""in"")"
+"2","Bin width defaults to 1/30 of the range of the data. Pick better value with `binwidth`.
+"

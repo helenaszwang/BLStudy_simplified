@@ -1,0 +1,181 @@
+"0","library(dplyr)"
+"2","
+Attaching package: ‘dplyr’
+
+"
+"2","The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+"
+"2","The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+"
+"2","Warning messages:
+"
+"2","1: package ‘lmerTest’ was built under R version 4.0.5 
+"
+"2","2: package ‘lme4’ was built under R version 4.0.5 
+"
+"0","library(tidyr)"
+"2","
+Attaching package: ‘tidyr’
+
+"
+"2","The following objects are masked from ‘package:Matrix’:
+
+    expand, pack, unpack
+
+"
+"0","library(ggplot2)"
+"2","Warning:"
+"2"," package ‘ggplot2’ was built under R version 4.0.5
+"
+"0","library(ggpubr)"
+"2","Warning:"
+"2"," package ‘ggpubr’ was built under R version 4.0.5
+"
+"2","Registered S3 methods overwritten by 'car':
+  method                          from
+  influence.merMod                lme4
+  cooks.distance.influence.merMod lme4
+  dfbeta.influence.merMod         lme4
+  dfbetas.influence.merMod        lme4
+"
+"0","library(rlang)"
+"2","Warning:"
+"2"," package ‘rlang’ was built under R version 4.0.5
+"
+"0","library(lme4) # For doing linear mixed modeling"
+"0","library(jtools) # For looking at lmer outputs"
+"0","library(lmerTest) # For looking at lmer outputs"
+"0","library(Hmisc) # For getting p-values for correlation matrix"
+"2","Warning:"
+"2"," package ‘Hmisc’ was built under R version 4.0.5
+"
+"2","Loading required package: lattice
+"
+"2","Loading required package: survival
+"
+"2","Loading required package: Formula
+"
+"2","
+Attaching package: ‘Hmisc’
+
+"
+"2","The following object is masked from ‘package:jtools’:
+
+    %nin%
+
+"
+"2","The following objects are masked from ‘package:dplyr’:
+
+    src, summarize
+
+"
+"2","The following objects are masked from ‘package:base’:
+
+    format.pval, units
+
+"
+"0","library(rstatix) # For running ANOVAs"
+"2","Warning:"
+"2"," package ‘rstatix’ was built under R version 4.0.5
+"
+"2","
+Attaching package: ‘rstatix’
+
+"
+"2","The following object is masked from ‘package:stats’:
+
+    filter
+
+"
+"0","library(effectsize)"
+"2","Warning:"
+"2"," package ‘effectsize’ was built under R version 4.0.5
+"
+"2","Registered S3 methods overwritten by 'parameters':
+  method                           from      
+  as.double.parameters_kurtosis    datawizard
+  as.double.parameters_skewness    datawizard
+  as.double.parameters_smoothness  datawizard
+  as.numeric.parameters_kurtosis   datawizard
+  as.numeric.parameters_skewness   datawizard
+  as.numeric.parameters_smoothness datawizard
+  print.parameters_distribution    datawizard
+  print.parameters_kurtosis        datawizard
+  print.parameters_skewness        datawizard
+  summary.parameters_kurtosis      datawizard
+  summary.parameters_skewness      datawizard
+"
+"2","
+Attaching package: ‘effectsize’
+
+"
+"2","The following objects are masked from ‘package:rstatix’:
+
+    cohens_d, eta_squared
+
+"
+"2","The following object is masked from ‘package:jtools’:
+
+    standardize
+
+"
+"0","library(emmeans)"
+"0","library(singcar)"
+"2","Warning:"
+"2"," package ‘singcar’ was built under R version 4.0.5
+"
+"0","library(forcats)"
+"2","Warning:"
+"2"," package ‘forcats’ was built under R version 4.0.5
+"
+"0","library(plotrix)"
+"2","Warning:"
+"2"," package ‘plotrix’ was built under R version 4.0.5
+"
+"0","library(ggsignif)"
+"2","Warning:"
+"2"," package ‘ggsignif’ was built under R version 4.0.5
+"
+"0","library(car) # Gives an alternative anova tool"
+"2","Warning:"
+"2"," package ‘car’ was built under R version 4.0.3
+"
+"2","Loading required package: carData
+"
+"2","
+Attaching package: ‘car’
+
+"
+"2","The following object is masked from ‘package:dplyr’:
+
+    recode
+
+"
+"0","library(nlme)"
+"2","Warning:"
+"2"," package ‘nlme’ was built under R version 4.0.5
+"
+"2","
+Attaching package: ‘nlme’
+
+"
+"2","The following object is masked from ‘package:dplyr’:
+
+    collapse
+
+"
+"2","The following object is masked from ‘package:lme4’:
+
+    lmList
+
+"
+"0","confidence_interval = function(x){ # Function that calculates the 95% confidence interval of distribution x"
+"0","  qnorm(.95) * (sd(x)/sqrt(length(x)))"
+"0","}"
+"0",""

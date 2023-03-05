@@ -1,0 +1,824 @@
+---
+title: "BLanalysis"
+output: html_document
+---
+
+```{r Setup, include=FALSE}
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(ggpubr)
+library(rlang)
+library(lme4) # For doing linear mixed modeling
+library(jtools) # For looking at lmer outputs
+library(lmerTest) # For looking at lmer outputs
+library(Hmisc) # For getting p-values for correlation matrix
+library(rstatix) # For running ANOVAs
+library(effectsize)
+library(emmeans)
+library(singcar)
+library(forcats)
+library(plotrix)
+library(ggsignif)
+library(car) # Gives an alternative anova tool
+library(nlme)
+
+
+confidence_interval = function(x){ # Function that calculates the 95% confidence interval of distribution x
+  qnorm(.95) * (sd(x)/sqrt(length(x)))
+}
+
+```
+
+```{r Load data, include=FALSE}
+# ------------------------------- Load data files -------------------------------------------- #
+# In person participants (including BL)
+orig.mst = as.data.frame(read.csv("./mstdata.csv", fileEncoding="UTF-8-BOM"))
+orig.sl = as.data.frame(read.csv("./sldata.csv", fileEncoding="UTF-8-BOM"))
+orig.rt = as.data.frame(read.csv("./rawRT.csv", fileEncoding="UTF-8-BOM"))
+orig.fa = as.data.frame(read.csv("./FAs.csv", fileEncoding="UTF-8-BOM"))
+## Add in "Positions" that's missing from orig.fa
+orig.fa$Position = ifelse(orig.fa$Syllable %in% c("fe", "re", "ru", "ta"), 1, 
+                          ifelse(orig.fa$Syllable %in% c("fu", "ge", "pu", "ti"), 2,
+                                 ifelse(orig.fa$Syllable %in% c("ko", "me", "ni", "su"), 3, orig.fa$Position)))
+
+# Online participants
+online_rt = as.data.frame(read.csv("./OnlineSubjects/online_RTs.csv", fileEncoding="UTF-8-BOM"))
+online_fa = as.data.frame(read.csv("./OnlineSubjects/online_FAs.csv", fileEncoding="UTF-8-BOM"))
+
+# Combine in person and online TD results
+orig.rt = rbind(orig.rt, online_rt)
+orig.fa = rbind(orig.fa, online_fa)
+
+# ------------------------------- Organize data files ---------------------------------------- #
+# Label participant type
+orig.mst$Type = ifelse(orig.mst$Subject == 0, "BL", ifelse(orig.mst$Subject > 12, "Control-O", "Control"))
+orig.sl$Type = ifelse(orig.sl$Subject == 0, "BL", ifelse(orig.sl$Subject > 12, "Control-O", "Control"))
+orig.rt$Type = ifelse(orig.rt$Subject == 0, "BL", ifelse(orig.rt$Subject > 12, "Control-O", "Control"))
+orig.rt$RT = orig.rt$RT*1000
+orig.fa$Type = ifelse(orig.fa$Subject == 0, "BL", ifelse(orig.fa$Subject > 12, "Control-O", "Control"))
+orig.fa$FalseAlarm = orig.fa$FalseAlarm*100
+orig.fa$HitRate = orig.fa$HitRate*100
+
+# ------------------------ Create data frames for controls and BL ------------------------------ #
+# MST
+mst_cont = filter(orig.mst, Subject != 0) 
+mst_bl = filter(orig.mst, Subject == 0) 
+# SL: Explicit tasks
+sl_cont = orig.sl %>%
+  filter(Subject != 0) %>%
+  mutate(W_PW = Word-Partword, W_NW = Word-Nonword)
+sl_bl = orig.sl %>%
+  filter(Subject == 0) %>%
+  mutate(W_PW = Word-Partword, W_NW = Word-Nonword)
+# SL: Target detection (Reaction time)
+rt_cont = filter(orig.rt, Subject != 0)
+rt_bl = filter(orig.rt, Subject == 0)
+# SL: Target detection (False alarms)
+fa_cont = filter(orig.fa, Subject != 0)
+fa_bl = filter(orig.fa, Subject == 0)
+```
+
+```{r Check for outliers in controls}
+outlierupper = mean(mst_cont$w_Dsc) + sd(mst_cont$w_Dsc)*2
+outlierlower = mean(mst_cont$w_Dsc) - sd(mst_cont$w_Dsc)*2
+
+mst_cont$outlier = ifelse(mst_cont$w_Dsc > outlierupper, 
+                                           ifelse(mst_cont$w_Dsc < outlierlower, "out", NA), NA)
+# "out" if a MST score is greater than or smaller than the average by 2 SD
+```
+
+##Primary Analysis
+#####MST
+```{r Single subject comparison of Dsc and Rcg}
+# Crawford-Howell single subject t-test with singcar package
+# The default of TD is one-tailed (H1 => BL is lower than controls)
+TD(mst_bl$w_Dsc, mst_cont$w_Dsc) # p = 0.0552 if Subject 4 is removed
+TD(mst_bl$w_Rcg, mst_cont$w_Rcg)
+TD(mst_bl$s_Dsc, mst_cont$s_Dsc) # p = 0.0255 if Subject 4 is removed
+TD(mst_bl$s_Rcg, mst_cont$s_Rcg)
+
+# In-person vs online comparison
+t.test(w_Dsc ~ Type, data = mst_cont, var.equal = TRUE)
+cohens_d(w_Dsc ~ Type, data = mst_cont)
+t.test(w_Rcg ~ Type, data = mst_cont, var.equal = TRUE)
+cohens_d(w_Rcg ~ Type, data = mst_cont)
+t.test(s_Dsc ~ Type, data = mst_cont, var.equal = TRUE)
+cohens_d(s_Dsc ~ Type, data = mst_cont)
+t.test(s_Rcg ~ Type, data = mst_cont, var.equal = TRUE)
+cohens_d(s_Rcg ~ Type, data = mst_cont)
+```
+
+
+```{r Comparison of accuracy}
+## Watch out for multiple comparison
+# Word MST
+TD(mst_bl$w_Old.Old, mst_cont$w_Old.Old)
+TD(mst_bl$w_New.Lure, mst_cont$w_New.Lure)
+TD(mst_bl$w_New.New, mst_cont$w_New.New)
+
+# Sound MST
+TD(mst_bl$s_Old.Old, mst_cont$s_Old.Old)
+TD(mst_bl$s_New.Lure, mst_cont$s_New.Lure)
+TD(mst_bl$s_New.New, mst_cont$s_New.New)
+```
+
+```{r Similarity rating}
+mst_inperson = filter(mst_cont, Subject <= 12, Subject != 0)
+TD(mst_bl$similarity, mst_inperson$similarity)
+```
+
+
+#####SL
+```{r Descriptive stats}
+# BL's average hit rate and false alarm rate
+print("BL Hit Rate")
+mean(filter(orig.fa, Subject == 0)$HitRate)
+print("BL False Alarm Rate")
+mean(filter(orig.fa, Subject == 0)$FalseAlarm)
+# Controls' average hit rate and false alarm rate
+print("Control Hit Rate")
+mean(filter(orig.fa, Subject != 0)$HitRate)
+print("Control False Alarm Rate")
+mean(filter(orig.fa, Subject != 0)$FalseAlarm)
+# BL's average 2AFC accuracy
+print("BL AFC")
+mean(filter(orig.sl, Subject == 0)$AFC)
+# Controls average 2AFC accuracy
+print("Control AFC")
+mean(filter(orig.sl, Subject != 0)$AFC)
+# BL's average RT
+print("BL RT")
+mean(rt_bl$RT)
+print("Control RT")
+mean(rt_cont$RT)
+```
+
+```{r (Add trial number to RT data)}
+sub_list = unique(rt_cont$Subject)
+rt_cont = mutate(rt_cont, Trial = 0)
+for(i in sub_list){
+  count = 1
+  for(j in 1:(length(rt_cont$Subject)-1)){
+  if (rt_cont$Subject[j] == i) {
+    
+      if(rt_cont$Syllable[j] == rt_cont$Syllable[j+1]){
+        rt_cont$Trial[j] = count
+      }
+      else{
+        rt_cont$Trial[j] = count
+        count = count+1
+      }
+  }
+  }
+}
+rt_cont$Trial[3243] = 35
+
+rt_bl = mutate(rt_bl, Trial = 0)
+count = 1
+for(j in 1:(length(rt_bl$Subject)-1)){
+      if(rt_bl$Syllable[j] == rt_bl$Syllable[j+1]){
+        rt_bl$Trial[j] = count
+      }
+      else{
+        rt_bl$Trial[j] = count
+        count = count+1
+      }
+}
+rt_bl$Trial[122] = 36
+
+```
+
+```{r Target Detection}
+# ------------------------------- Position effect ----------------------------------- #
+# BL
+# 1. Using anova(lm)(between)
+bl_rt = lm(RT ~ as.factor(Position), data=rt_bl)
+anova(bl_rt)
+# Effect size
+eta_squared(bl_rt)
+
+# 2. Using anova_test (within)
+View(anova(lme(RT ~ as.factor(Position), random = ~1|Subject, data = rt_bl)))
+
+# Controls
+# 1. Using anova(lm) (within)
+cont_rt = lmer(RT ~ as.factor(Position) + (1|Subject), data=rt_cont)
+anova(cont_rt)
+# Effect size
+eta_squared(cont_rt)
+# Pairwise comparison
+emmeans(cont_rt, list(pairwise ~ as.factor(Position)), adjust="bonferroni")
+
+# 2. Using anova_test (within)
+anova(lme(RT ~ as.factor(Position), random = ~1|Subject, data = rt_cont))
+
+```
+
+```{r Target Detection - Linear contrast}
+# Contrast the Position levels
+c1 <- c(-1, 0, 1)
+c2 <- c(-1, 0.5, 0.5)
+## combined the above 2 lines into a matrix
+mat <- cbind(c1,c2)
+
+# Controls
+## tell R that the matrix gives the contrasts you want
+rt_cont$Position = as.factor(rt_cont$Position)
+contrasts(rt_cont$Position) <- mat
+
+## Fit a mixed effects ANOVA and run polynomial contrasts
+model1 <- aov(RT ~ Position + Error(Subject), data = rt_cont)
+summary(model1)
+summary(model1, split=list(Position=list("Linear"=1, "Quadratic" = 2)))
+## Effect size
+eta_squared(model1)
+
+# BL
+## tell R that the matrix gives the contrasts you want
+rt_bl$Position = as.factor(rt_bl$Position)
+contrasts(rt_bl$Position) <- mat
+
+## Fit a mixed effects ANOVA and run polynomial contrasts
+model2 <- aov(RT ~ Position, data = rt_bl)
+summary(model2, split=list(Position=list("Linear"=1, "Quadratic" = 2)))
+## Effect size
+eta_squared(model2)
+```
+
+
+```{r Target Detection - RT Prediction score}
+# ------------------------------- 1. T.test comparison -------------------------------- #
+TD(sl_bl$RT.Effect, sl_cont$RT.Effect)
+# Group difference in RT Score
+t.test(RT.Effect ~ Type, data=sl_cont, var.equal = TRUE)
+
+# ---------------------------- 2. Monte Carlo simulation ------------------------------ #
+# Scramble BL's data across syllable positions and generate a null distribution of RT scores. Repeat this 1000 times.
+null_scores = data.frame(score = numeric(1000), count = numeric(1000))
+c = 1
+for(i in 1:1000){
+  bl_shuffled=transform(rt_bl, RT = sample(RT)) # Shuffles column RT
+  bl_shuffled = bl_shuffled %>%
+    group_by(Position) %>%
+    summarise(mean = mean(RT)) 
+  rt_score = (bl_shuffled[1, 2] - bl_shuffled[3, 2]) / bl_shuffled[1, 2]
+  null_scores[c, ] = c(rt_score, c)
+  c = c+1
+}
+
+# What's the percentile of BL's original RT prediction score on this null distribution?
+percentile = ecdf(null_scores$score)
+percentile(sl_bl$RT.Effect)
+# Visualize
+ggplot(null_scores)+
+  geom_point(aes(x=0, y=score)) +
+  geom_boxplot(aes(y=score))
+```
+```{r Target Detection - Hit rate}
+# Controls
+hitrateanova = lmer(HitRate ~ Position + (1|Subject), data=fa_cont)
+anova(hitrateanova)
+emmeans(hitrateanova, list(pairwise ~ Position), adjust="bonferroni")
+
+## Linear contrast
+fa_cont$Position = as.factor(fa_cont$Position)
+contrasts(fa_cont$Position) <- mat
+model_fa = aov(HitRate ~ Position + Error(Subject), data = fa_cont)
+summary(model_fa, split=list(Position=list("Linear"=1, "Quadratic" = 2)))
+
+# BL
+anova(lme(HitRate ~ as.factor(Position), random = ~1|Subject, data = fa_bl))
+
+```
+
+
+```{r Familiarity rating}
+# --------------------------- Effect of word category on rating --------------------------- #
+sl_bl_long = sl_bl %>%
+  pivot_longer(ends_with("word"), names_to = "Condition", values_to = "Score")
+sl_cont_long = sl_cont %>%
+  pivot_longer(ends_with("word"), names_to = "Condition", values_to = "Score")
+
+cont_fam = lmer(Score ~ as.factor(Condition) + (1|Subject), data=sl_cont_long)
+anova(cont_fam)
+# Effect size
+eta_squared(cont_fam)
+# Pairwise comparison
+emmeans(cont_fam, list(pairwise ~ as.factor(Condition)), adjust="bonferroni")
+
+# ---------------------------------- W-PW, W-NW comparisons -------------------------------- #
+TD(sl_bl$W_PW, sl_cont$W_PW)
+TD(sl_bl$W_NW, sl_cont$W_NW)
+
+# Group effect
+summary(lm(W_PW ~ Type, data=sl_cont))
+summary(lm(W_NW ~ Type, data=sl_cont))
+
+
+```
+
+AFC - compare to chance level, compare to group average (C-H)
+```{r 2AFC}
+# --------------------- T.test comparison -------------------- #
+TD(sl_bl$AFC, sl_cont$AFC)
+
+# ----- Control group  - is it above chance level (0.5)? ----- #
+t.test(sl_cont$AFC ~ 1, mu=0.5)
+cohens_d(sl_cont$AFC ~ 1, mu=0.5)
+
+# ------------------- In person vs online -------------------- #
+summary(lm(AFC ~ Type, data=sl_cont))
+```
+
+
+##Visualization
+
+```{r MST accuracy}
+## WMST - Create data frame
+w_mst_acc_cont = select(orig.mst, Subject, w_Old.Old, w_New.Lure, w_New.New) %>%
+  filter(Subject != 0) %>%
+  summarise(Old = mean(w_Old.Old), Lure = mean(w_New.Lure), New = mean(w_New.New),
+            Old_ci = confidence_interval(w_Old.Old), Lure_ci = confidence_interval(w_New.Lure), New_ci = confidence_interval(w_New.New))
+w_mst_acc_cont$Type = "Controls"
+
+w_mst_acc_bl = select(orig.mst, Subject, w_Old.Old, w_New.Lure, w_New.New) %>%
+  filter(Subject == 0) %>%
+  select(!Subject) %>%
+  rename(Old = w_Old.Old, Lure = w_New.Lure, New = w_New.New) %>%
+  mutate(Old_ci = 0, Lure_ci = 0, New_ci = 0)
+w_mst_acc_bl$Type = "BL"
+
+w_mst_acc = rbind(w_mst_acc_cont, w_mst_acc_bl) %>%
+  select(Old, Lure, New, Type) %>%
+  pivot_longer(c("Old", "Lure", "New"), names_to = "Condition", values_to = "Accuracy")
+w_mst_acc_ci = rbind(w_mst_acc_cont, w_mst_acc_bl) %>%
+  select(Old_ci, Lure_ci, New_ci, Type) %>%
+  pivot_longer(ends_with("ci"), names_to = "Condition2", values_to = "CI") %>%
+  select(!Type)
+w_mst_acc = cbind(w_mst_acc, w_mst_acc_ci)
+
+## SMST - Create data frame
+s_mst_acc_cont = select(orig.mst, Subject, s_Old.Old, s_New.Lure, s_New.New) %>%
+  filter(Subject != 0) %>%
+  summarise(Old = mean(s_Old.Old), Lure = mean(s_New.Lure), New = mean(s_New.New),
+            Old_ci = confidence_interval(s_Old.Old), Lure_ci = confidence_interval(s_New.Lure), New_ci = confidence_interval(s_New.New))
+s_mst_acc_cont$Type = "Controls"
+
+s_mst_acc_bl = select(orig.mst, Subject, s_Old.Old, s_New.Lure, s_New.New) %>%
+  filter(Subject == 0) %>%
+  select(!Subject) %>%
+  rename(Old = s_Old.Old, Lure = s_New.Lure, New = s_New.New) %>%
+  mutate(Old_ci = 0, Lure_ci = 0, New_ci = 0)
+s_mst_acc_bl$Type = "BL"
+
+s_mst_acc = rbind(s_mst_acc_cont, s_mst_acc_bl) %>%
+  select(Old, Lure, New, Type) %>%
+  pivot_longer(c("Old", "Lure", "New"), names_to = "Condition", values_to = "Accuracy")
+s_mst_acc_ci = rbind(s_mst_acc_cont, s_mst_acc_bl) %>%
+  select(Old_ci, Lure_ci, New_ci, Type) %>%
+  pivot_longer(ends_with("ci"), names_to = "Condition2", values_to = "CI") %>%
+  select(!Type)
+s_mst_acc = cbind(s_mst_acc, s_mst_acc_ci)
+  
+## Visualize WMST
+ggplot(w_mst_acc, aes(x=factor(Condition, levels = c("Old", "Lure", "New")), y=Accuracy, fill=Type)) +
+  geom_bar(stat="identity", position = position_dodge(), color="black", width = 0.5) +
+  scale_fill_manual(values= c("red", "white")) + 
+  ylab('Accuracy') +
+  xlab('Condition') +
+  labs(tag = "A", title = "Word MST") +
+  geom_errorbar(aes(ymin = Accuracy-CI, ymax = Accuracy+CI), 
+                color="black", position=position_dodge(0.5), width = 0.3) +
+  theme_bw(base_size = 12) +
+  theme(legend.position = ("none"), plot.title = element_text(hjust = 0.5, size = 11.5),
+        plot.tag.position = c(0.02, 1)) +
+  scale_y_continuous(limits = c(0, 1.1), expand = c(0,0))
+
+ggsave("Plots/wmst_acc.png", dev='png', dpi=300, height=2.5, width= 2.5, units="in")
+
+## Visualize SMST
+ggplot(s_mst_acc, aes(x=factor(Condition, levels = c("Old", "Lure", "New")), y=Accuracy, fill=Type)) +
+  geom_bar(stat="identity", position = position_dodge(), color="black", width = 0.5) +
+  scale_fill_manual(values= c("red", "white")) + 
+  ylab('Accuracy') +
+  xlab('Condition') +
+  labs(tag = "B", title = "Sound MST") +
+  geom_errorbar(aes(ymin = Accuracy-CI, ymax = Accuracy+CI), 
+                color="black", position=position_dodge(0.5), width = 0.3) +
+  theme_bw(base_size = 12) +
+  theme(legend.title = element_blank(), plot.title = element_text(hjust = 0.5,size = 11.5),
+        plot.tag.position = c(0.02, 1)) +
+  scale_y_continuous(limits = c(0, 1.1), expand = c(0,0))
+
+
+ggsave("Plots/smst_acc.png", dev='png', dpi=300, height=2.5, width= 3.6, units="in")
+```
+
+```{r MST accuracy2 - proportion of "Old"s}
+## WMST - Create data frame
+w_mst_acc_cont2 = select(orig.mst, Subject, w_Old.Old, w_Old.Lure, w_Old.New) %>%
+  filter(Subject != 0) %>%
+  summarise(Old = mean(w_Old.Old), Lure = mean(w_Old.Lure), New = mean(w_Old.New),
+            Old_ci = confidence_interval(w_Old.Old), Lure_ci = confidence_interval(w_Old.Lure), New_ci = confidence_interval(w_Old.New))
+w_mst_acc_cont2$Type = "Controls"
+
+w_mst_acc_bl2 = select(orig.mst, Subject, w_Old.Old, w_Old.Lure, w_Old.New) %>%
+  filter(Subject == 0) %>%
+  select(!Subject) %>%
+  rename(Old = w_Old.Old, Lure = w_Old.Lure, New = w_Old.New) %>%
+  mutate(Old_ci = 0, Lure_ci = 0, New_ci = 0)
+w_mst_acc_bl2$Type = "BL"
+
+w_mst_acc2 = rbind(w_mst_acc_cont2, w_mst_acc_bl2) %>%
+  select(Old, Lure, New, Type) %>%
+  pivot_longer(c("Old", "Lure", "New"), names_to = "Condition", values_to = "Accuracy")
+w_mst_acc_ci2 = rbind(w_mst_acc_cont2, w_mst_acc_bl2) %>%
+  select(Old_ci, Lure_ci, New_ci, Type) %>%
+  pivot_longer(ends_with("ci"), names_to = "Condition2", values_to = "CI") %>%
+  select(!Type)
+w_mst_acc2 = cbind(w_mst_acc2, w_mst_acc_ci2)
+
+## SMST - Create data frame
+s_mst_acc_cont2 = select(orig.mst, Subject, s_Old.Old, s_Old.Lure, s_Old.New) %>%
+  filter(Subject != 0) %>%
+  summarise(Old = mean(s_Old.Old), Lure = mean(s_Old.Lure), New = mean(s_Old.New),
+            Old_ci = confidence_interval(s_Old.Old), Lure_ci = confidence_interval(s_Old.Lure), New_ci = confidence_interval(s_Old.New))
+s_mst_acc_cont2$Type = "Controls"
+
+s_mst_acc_bl2 = select(orig.mst, Subject, s_Old.Old, s_Old.Lure, s_Old.New) %>%
+  filter(Subject == 0) %>%
+  select(!Subject) %>%
+  rename(Old = s_Old.Old, Lure = s_Old.Lure, New = s_Old.New) %>%
+  mutate(Old_ci = 0, Lure_ci = 0, New_ci = 0)
+s_mst_acc_bl2$Type = "BL"
+
+s_mst_acc2 = rbind(s_mst_acc_cont2, s_mst_acc_bl2) %>%
+  select(Old, Lure, New, Type) %>%
+  pivot_longer(c("Old", "Lure", "New"), names_to = "Condition", values_to = "Accuracy")
+s_mst_acc_ci2 = rbind(s_mst_acc_cont2, s_mst_acc_bl2) %>%
+  select(Old_ci, Lure_ci, New_ci, Type) %>%
+  pivot_longer(ends_with("ci"), names_to = "Condition2", values_to = "CI") %>%
+  select(!Type)
+s_mst_acc2 = cbind(s_mst_acc2, s_mst_acc_ci2)
+  
+## Visualize WMST
+fig3A = ggplot(w_mst_acc2, aes(x=factor(Condition, levels = c("Old", "Lure", "New")), y=Accuracy, fill=Type)) +
+  geom_bar(stat="identity", position = position_dodge(), color="black", width = 0.5) +
+  scale_fill_manual(values= c("red", "white")) + 
+  ylab('Proportion of "Old" responses') +
+  xlab('Condition') +
+  scale_x_discrete(labels=c("Repeat", "Lure", "First")) +
+  labs(tag = "A", title = "Word MST") +
+  geom_errorbar(aes(ymin = Accuracy-CI, ymax = Accuracy+CI), 
+                color="black", position=position_dodge(0.5), width = 0.3) +
+  theme_bw(base_size = 12) +
+  theme(legend.position = ("none"), plot.title = element_text(hjust = 0.5, size = 11.5),
+        plot.tag.position = c(0.02, 1)) +
+  theme(axis.title.y = element_text(size=10)) +
+  scale_y_continuous(limits = c(0, 1.1), expand = c(0,0))
+fig3A
+
+ggsave("Plots/wmst_acc2.png", dev='png', dpi=300, height=2.5, width= 2.5, units="in")
+
+## Visualize SMST
+fig3B = ggplot(s_mst_acc2, aes(x=factor(Condition, levels = c("Old", "Lure", "New")), y=Accuracy, fill=Type)) +
+  geom_bar(stat="identity", position = position_dodge(), color="black", width = 0.5) +
+  scale_fill_manual(values= c("red", "white")) + 
+  ylab('Proportion of "Old" responses') +
+  xlab('Condition') +
+  scale_x_discrete(labels=c("Repeat", "Lure", "First")) +
+  labs(tag = "B", title = "Sound MST") +
+  geom_errorbar(aes(ymin = Accuracy-CI, ymax = Accuracy+CI), 
+                color="black", position=position_dodge(0.5), width = 0.3) +
+  theme_bw(base_size = 12) +
+  theme(legend.title = element_blank(), plot.title = element_text(hjust = 0.5,size = 11.5),
+        plot.tag.position = c(0.02, 1)) +
+  theme(axis.title.y = element_text(size=10)) +
+  scale_y_continuous(limits = c(0, 1.1), expand = c(0,0))
+fig3B
+
+ggsave("Plots/smst_acc2.png", dev='png', dpi=300, height=2.5, width= 3.6, units="in")
+
+ggarrange(fig3A, fig3B, nrow=1, ncol=2)
+ggsave("Plots/mst_accAB.png", dev='png', dpi=300, height=2.5, width= 6.1, units="in")
+```
+
+
+```{r Word MST}
+ggplot(data = filter(orig.mst, Subject < 50), aes(x = "", y = w_Dsc)) +
+  geom_boxplot(fill='white', width=.5) +
+  geom_dotplot(binaxis = "y", stackgroups = TRUE, stackdir = "center", aes(fill = Type), dotsize = 1.5) +
+  scale_fill_manual(values = c("red", "white","light grey")) +
+  theme_bw(base_size = 12) +
+  theme(legend.position = ("none"), plot.title.position = "plot") +
+  ylab("Lure discrimination (d')") +
+  xlab("") +
+  ggtitle("A") +
+  scale_y_continuous(labels = scales::number_format(accuracy = 0.1,
+                                 decimal.mark = '.'))
+
+
+ggsave("Plots/WMSTDSC.png", dev='png', dpi=300, height=2.5, width=2.5, units="in")
+
+ggplot(data = filter(orig.mst, Subject < 50), aes(x = "", y = w_Rcg)) +
+  geom_boxplot(fill='white', width=.5) +
+  geom_dotplot(binaxis = "y", stackgroups = TRUE, stackdir = "center", aes(fill = Type),
+               dotsize = 1.5) +
+  scale_fill_manual(values = c("red", "white","light grey")) +
+  theme_bw(base_size = 12) +
+  theme(legend.position = ("none"), plot.title.position = "plot") +
+  ylab("Recognition (d')") +
+  xlab("") +
+  ggtitle("B") +
+  scale_y_continuous(labels = scales::number_format(accuracy = 0.1,
+                                 decimal.mark = '.'))
+
+  
+ggsave("Plots/WMSTRCG.png",  dev='png', dpi=300, height=2.5, width=2.5, units="in")
+```
+
+
+```{r Sound MST}
+ggplot(data = filter(orig.mst, Subject < 50), aes(x = "", y = s_Dsc)) +
+  geom_boxplot(fill='white', width=.5) +
+  geom_dotplot(binaxis = "y", stackgroups = TRUE, stackdir = "center", aes(fill = Type),
+               dotsize = 1.5) +
+  scale_fill_manual(values = c("red", "white","light grey")) +
+  theme_bw(base_size = 12) +
+  theme(legend.position = ("none"), plot.title.position = "plot") +
+  ylab("Lure discrimination (d')") +
+  xlab("") +
+  ggtitle("C") +
+  scale_y_continuous(labels = scales::number_format(accuracy = 0.1,
+                                 decimal.mark = '.'))
+
+
+ggsave("Plots/SMSTDSC.png", dev='png', dpi=300, height=2.5, width=2.5, units="in")
+
+ggplot(data = filter(orig.mst, Subject < 50), aes(x = "", y = s_Rcg)) +
+  geom_boxplot(fill='white', width=.5) +
+  geom_dotplot(binaxis = "y", stackgroups = TRUE, stackdir = "center", aes(fill = Type),
+               dotsize = 1.5) +
+  scale_fill_manual(values = c("red", "white","light grey"), 
+                    labels=c('BL',
+                             'In-person controls',
+                             'Online controls')) +
+  theme_bw(base_size = 12) +
+  theme(legend.position = ("none"), plot.title.position = "plot") +
+  ylab("Recognition (d')") +
+  xlab("") +
+  ggtitle("D") +
+  scale_y_continuous(labels = scales::number_format(accuracy = 0.1,
+                                 decimal.mark = '.'))
+
+ggsave("Plots/SMSTRCG.png", dev='png', dpi=300, height=2.5, width=2.5, units="in")
+```
+
+```{r RT}
+rt_sum = orig.rt %>%
+  mutate(Type2 = ifelse(orig.rt$Type == "BL", "BL", "Control")) %>%
+  group_by(Position, Type2) %>%
+  summarise(meanRT = mean(RT), SE = std.error(RT))
+rt_sum$SE = ifelse(rt_sum$Type2=="BL", 0, rt_sum$SE)
+  
+# Plot
+ggplot(rt_sum, aes(x=as.factor(Position), y=meanRT, group=Type2)) +
+  geom_line(aes(linetype=Type2, color=Type2)) +
+  geom_point(size=0.75) +
+  scale_linetype_manual(values=c("solid", "dashed"))+
+  scale_color_manual(values=c("red", "black")) +
+  ylab('Mean RT (ms)') +
+  xlab('Syllable position') +
+  ggtitle("A") +
+  geom_errorbar(aes(ymin = meanRT-SE, ymax = meanRT+SE, width=0), color="black", size=1) +
+  scale_y_continuous(limits=c(475,725)) +
+  # geom_signif(comparisons = list(c("1", "3")), color = "black", tip_length = 0,
+  #             map_signif_level = TRUE, annotations = "***") +
+  theme_bw(base_size = 12) +
+  theme(legend.title = element_blank(), legend.position = ("none"), plot.title.position = "plot")
+
+
+ggsave("Plots/RT.png", dev='png', dpi=300, height=2.5, width= 2.5, units="in")
+ggsave("Plots/RT.svg", dev='svg', dpi=300, height=2.5, width= 2.5, units="in")
+
+```
+
+
+```{r False alarm and Hit rates}
+fa_sum = orig.fa %>%
+  mutate(Type2 = ifelse(orig.fa$Type == "BL", "BL", "Control")) %>%
+  group_by(Position, Type2) %>%
+  summarise(meanFA = mean(FalseAlarm), SE = std.error(FalseAlarm))
+fa_sum$SE = ifelse(fa_sum$Type2=="BL", NA, fa_sum$SE)
+
+ggplot(fa_sum, aes(x=as.factor(Position), y=meanFA, group=Type2, fill=Type2)) +
+  geom_bar(stat="identity", position = position_dodge(), color="black", width = 0.75) +
+  scale_fill_manual(values= c("red", "white")) + 
+  ylab('Mean False Alarm Rate (%)') +
+  xlab('Syllable position') +
+  geom_errorbar(aes(ymin = meanFA-SE, ymax = meanFA+SE), 
+                color="black", position=position_dodge(0.75), width = 0.5) +
+  theme_bw(base_size = 12) +
+  theme(legend.title = element_blank())
+
+ggsave("falsealram.png", dev='png', dpi=300, height=2.5, width= 3.7, units="in")
+
+library(scales)
+hr_sum = orig.fa %>%
+  mutate(Type2 = ifelse(orig.fa$Type == "BL", "BL", "Control")) %>%
+  group_by(Position, Type2) %>%
+  summarise(meanHR = mean(HitRate), SE = std.error(HitRate))
+hr_sum$SE = ifelse(hr_sum$Type2=="BL", NA, hr_sum$SE)
+
+ggplot(hr_sum, aes(x=as.factor(Position), y=meanHR, group=Type2, fill=Type2)) +
+  geom_bar(stat="identity", position = position_dodge(), color="black", width = 0.75) +
+  scale_fill_manual(values= c("red", "white")) + 
+  ylab('Mean Hit Rate (%)') +
+  xlab('Syllable position') +
+  geom_errorbar(aes(ymin = meanHR-SE, ymax = meanHR+SE), 
+                color="black", position=position_dodge(0.75), width = 0.5) +
+  theme_bw(base_size = 12) +
+  theme(legend.title = element_blank()) +
+  scale_y_continuous(expand = c(0,0), limits = c(75, 95), oob = rescale_none)
+
+
+ggsave("hitrate.png", dev='png', dpi=300, height=2.5, width= 3.7, units="in")
+
+
+```
+
+
+```{r Familiarity Rating}
+fam_sum = orig.sl %>%
+  select(Word, Partword, Nonword, Subject, Type) %>%
+  mutate(Type2 = ifelse(orig.sl$Type == "BL", "BL", "Control")) %>%
+  filter(!is.na(Subject)==TRUE) %>% 
+  pivot_longer(ends_with("ord"), names_to = "Condition", values_to = "Rating") %>%
+  group_by(Condition, Type2) %>%
+  summarise(mean = mean(Rating), SE = std.error(Rating)) 
+
+ggplot(data=fam_sum, aes(x=Condition, y=mean, group=Type2, fill=Type2)) +
+   geom_bar(stat="identity", position = position_dodge(), color="black", width = 0.5) +
+  scale_fill_manual(values= c("red", "white")) + 
+  ylab('Mean Rating') +
+  xlab('Syllable position') +
+  ggtitle("B") +
+  scale_y_continuous(expand=c(0,0), limits = c(0, 4.5)) +
+  geom_errorbar(aes(ymin = mean-SE, ymax = mean+SE), 
+                color="black", position=position_dodge(0.5), width = 0.3) +
+  theme_bw(base_size = 12) +
+  theme(legend.title = element_blank(), plot.title.position = "plot")
+
+ggsave("./Plots/FamRating.png", dev='png', dpi=300, height=2.5, width= 3.5, units="in")
+```
+
+
+```{r AFC}
+ggplot(data = filter(orig.sl, Subject < 50), aes(x = "", y = AFC)) +
+  geom_boxplot(fill='white', width=.5) +
+  geom_dotplot(binaxis = "y", stackdir = "center", stackgroups = TRUE, aes(fill = Type), dotsize = 1.5) +
+  scale_fill_manual(values = c("red", "white","light grey")) +
+  theme_bw(base_size = 12) +
+  geom_hline(yintercept=0.5, linetype="dashed") +
+  theme(plot.title.position = "plot", legend.position = "none") +
+  ylab("Mean accuracy") +
+  xlab("") +
+  ggtitle("C") +
+  scale_y_continuous(labels = scales::number_format(accuracy = 0.1,
+                                 decimal.mark = '.'))
+
+ggsave("./Plots/AFC.png", dev='png', dpi=300, height=2.5, width= 2.5, units="in")
+```
+
+
+#####Additional Analysis
+```{r Block x Position}
+rt_bl_sum = rt_bl %>%
+  group_by(Position, Block) %>%
+  summarise(meanRT = mean(RT)) %>%
+  pivot_wider(names_from = 'Block', values_from = c('meanRT'))
+
+# Plot
+ggplot(rt_bl_sum, aes(x=Position)) +
+  geom_line(aes(y=rt_bl_sum$"1"), color = 'blue') +
+  geom_line(aes(y=rt_bl_sum$"2"), color = 'green') +
+  geom_line(aes(y=rt_bl_sum$"3"), color = 'red') +
+  ylab('Mean RT (ms)') +
+  xlab('Syllable position') +
+  theme(axis.line = element_line(color = 'black')) +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"))
+```
+
+```{r Cont: Block x Position}
+rt_cont_sum = rt_cont %>%
+  group_by(Position, Block) %>%
+  summarise(meanRT = mean(RT)) %>%
+  pivot_wider(names_from = 'Block', values_from = c('meanRT'))
+
+# Plot
+ggplot(rt_cont_sum, aes(x=Position)) +
+  geom_line(aes(y=rt_cont_sum$"1"), color = 'blue') +
+  geom_line(aes(y=rt_cont_sum$"2"), color = 'green') +
+  geom_line(aes(y=rt_cont_sum$"3"), color = 'red') +
+  ylab('Mean RT (ms)') +
+  xlab('Syllable position') +
+  theme(axis.line = element_line(color = 'black')) +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"))
+```
+
+```{r RT - Syllable x Position}
+rt_bl_sum2 = rt_bl %>%
+  group_by(Position, Syllable) %>%
+  summarise(meanRT = mean(RT))
+rt_bl_sum2$Syllable = as.factor(rt_bl_sum2$Syllable)
+
+# Plot
+ggplot(rt_bl_sum2, aes(x=fct_inorder(Syllable), y=meanRT)) +
+  geom_bar(stat="identity")+
+  xlab("Syllable") +
+  theme(axis.line = element_line(color = 'black')) +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"))
+```
+
+```{r False alarm - Syllable x Position}
+syllable_levels=c("fe", "re", "ru", "ta", "fu", "ge", "pu", "ti", "ko",
+                                                            "me", "ni", "su")
+
+# Plot
+ggplot(fa_bl_sum2, aes(x=factor(Syllable, levels = syllable_levels), y=meanHit)) +
+  geom_bar(stat="identity")+
+  xlab("Syllable") +
+  theme(axis.line = element_line(color = 'black')) +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"))
+
+summary(lm(HitRate ~ Position, data = fa_bl))
+fa_bl_sum3 = fa_bl %>%
+  group_by(Position) %>%
+  summarise(mean(HitRate))
+fa_cont_sum3 = fa_cont %>%
+  group_by(Position) %>%
+  summarise(mean(HitRate))
+
+# Plot
+ggplot(fa_bl_sum2, aes(x=factor(Syllable, levels = syllable_levels), y=meanFA)) +
+  geom_bar(stat="identity")+
+  xlab("Syllable") +
+  theme(axis.line = element_line(color = 'black')) +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"))
+```
+
+```{r Dec2021 MST}
+vmst = data.frame(Response = c("Old", "Similar                                    ",
+                               "New"),
+                  Repeat = c(0.89, 0.03, 0.08),
+                  Lure = c(0.63, 0.20, 0.17),
+                  Foil = c(0.11, 0.33, 0.56)) %>%
+  pivot_longer(c("Repeat", "Lure", "Foil"), names_to = "Condition", values_to = "Accuracy")
+  
+vmstplot <- ggplot(vmst, aes(x=factor(Condition, levels=c("Repeat", "Lure", "Foil")), y=Accuracy, Type=Response)) +
+  geom_bar(stat="identity", position = position_dodge(), aes(fill=Response), color="black") +
+  scale_fill_brewer(palette = "Set1") +
+  xlab("Condition") +
+  ggtitle("A") +
+  theme_bw(base_size = 12) +
+  theme(legend.title = element_blank(), plot.title.position = "plot") +
+  scale_y_continuous(expand = c(0,0), limits = c(0, 1.0))
+
+ggsave("./Plots/vMST.png", dev='png', dpi=300, height=2.5, width= 3.7, units="in")
+
+ldi_scores = data.frame(type=c("BL (60 yo)","BL (54 yo)"),
+                           LDI=c(-0.12, 0.02))
+rec_scores = data.frame(type=c("BL (60 yo)","BL (54 yo)"),
+                           LDI=c(0.78, 0.68))
+
+ldiplot <- ggplot(ldi_scores, aes(x = factor(type, levels = c("BL (60 yo)","BL (54 yo)")), y = LDI, fill = type)) +
+  geom_bar(stat = "identity", color = "black", width = 0.5) +
+  scale_fill_manual(values = c("red", "red", "white")) + 
+  xlab("") +
+  ylab("Lure Discrimination Index") +
+  ggtitle("B") +
+  theme_bw(base_size = 12) +
+  theme(plot.title.position = "plot", legend.position = "none", 
+        axis.title.y = element_text(size=11), axis.text.x = element_text(size=7))
+
+ggsave("./Plots/LDI.jpeg", dev='jpeg', dpi=300, height=2.5, width= 2.5, units="in")
+
+recplot <- ggplot(rec_scores, aes(x = factor(type, levels = c("BL (60 yo)","BL (54 yo)")), y = LDI, fill = type)) +
+  geom_bar(stat = "identity", color = "black", width = 0.5) +
+  scale_fill_manual(values = c("red", "red", "white")) + 
+  xlab("") +
+  ylab("Recognition") +
+  ggtitle("") +
+  theme_bw(base_size = 12) +
+  theme(plot.title.position = "plot", legend.position = "none", 
+        axis.title.y = element_text(size=11), axis.text.x = element_text(size=7)) +
+  scale_y_continuous(expand = c(0,0), limits = c(0, 1.0))
+
+ggsave("./Plots/REC.jpeg", dev='jpeg', dpi=300, height=2.5, width= 2.5, units="in")
+
+ggarrange(vmstplot, ggarrange(ldiplot, recplot, ncol = 2), nrow = 2)
+ggsave("./Plots/BL_ldi and rec.jpeg", dev="jpeg", dpi=300, height=5.0, width=5.0, units="in")
+```
+
+

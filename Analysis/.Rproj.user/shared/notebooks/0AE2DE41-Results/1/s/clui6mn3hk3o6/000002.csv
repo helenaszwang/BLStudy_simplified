@@ -1,0 +1,19 @@
+"0","# Plot
+ggplot(sum_PO, aes(x=Position, y=mean, color=Block, group=Block)) +
+  #geom_bar(stat = ""identity"", fill = 'black', alpha = 0.5, width = 0.5) + #For bar graph
+  geom_line(size=2) +
+  scale_colour_brewer(palette = ""Set1"")+
+  ylab('Mean RT (ms)') +
+  xlab('Syllable position') +
+  theme(axis.line = element_line(color = 'black'), 
+        axis.text.x = element_text(size=40, color=""black""), axis.title.x = element_text(size=50),
+        axis.text.y = element_text(size=40, color=""black""), axis.title.y = element_text(size=50),
+        legend.text=element_text(size=15))+
+  geom_errorbar(aes(ymin = mean-CI, ymax = mean+CI, width=0.05), color=""black"", size=1) +
+  theme(axis.line = element_line(color = 'black')) +
+## Uncomment for a blank background
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = ""black""))
+"
+"2","Error in ggplot(sum_PO, aes(x = Position, y = mean, color = Block, group = Block)) : 
+  object 'sum_PO' not found
+"

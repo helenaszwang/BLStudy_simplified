@@ -1,0 +1,6 @@
+"0","outlierupper = mean(mst_cont$w_Dsc) + sd(mst_cont$w_Dsc)*2"
+"0","outlierlower = mean(mst_cont$w_Dsc) - sd(mst_cont$w_Dsc)*2"
+"0",""
+"0","mst_cont$outlier = ifelse(mst_cont$w_Dsc > outlierupper, "
+"0","                                           ifelse(mst_cont$w_Dsc < outlierlower, ""out"", NA), NA)"
+"0","# ""out"" if a MST score is greater than or smaller than the average by 2 SD"

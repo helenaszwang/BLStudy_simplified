@@ -1,0 +1,700 @@
+---
+title: "Results"
+output:
+  word_document: default
+  html_document: default
+---
+###Setup
+```{r Setup, include=FALSE}
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(ggpubr)
+library(rlang)
+library(lme4) # For doing linear mixed modeling
+library(jtools) # For looking at lmer outputs
+library(lmerTest) # For looking at lmer outputs
+library(Hmisc) # For getting p-values for correlation matrix
+library(rstatix) # For running ANOVAs
+library(effectsize)
+library(emmeans)
+library(BayesFactor)
+
+confidence_interval = function(x){ # Function that calculates the 95% confidence interval of distribution x
+  qnorm(.95) * (sd(x)/sqrt(length(x)))
+}
+```
+
+```{r Load files, include=FALSE}
+## Load data files
+orig.df = as.data.frame(read.csv("./Summary.csv", fileEncoding="UTF-8-BOM"))
+
+yadf = read.csv("./YA_rawRT.csv")
+oadf = read.csv("./OA_rawRT.csv")
+oadf = mutate(oadf, Age = 0)
+yadf = mutate(yadf, Age = 1)
+rtdf_raw = rbind(oadf, yadf)
+rtdf_raw$RT = as.numeric(rtdf_raw$RT*1000)
+
+# Data for individual false alarm and hit rates
+yafa = read.csv("./YA_FAs.csv")
+oafa = read.csv("./OA_FAs.csv")
+yafa = mutate(yafa, Age = 1)
+oafa = mutate(oafa, Age = 0)
+fadf_raw = rbind(oafa, yafa)
+#fadf = read.csv('./fadf.csv')
+```
+
+```{r Filter files, include=FALSE}
+### Get lists of subjects to be excluded
+exc_list = select(filter(orig.df, Exclusion == 'exc'), Subject, Age)
+
+### Filter out unnecessary columns and make new variables
+df = orig.df %>%
+  filter(Exclusion != 'exc') %>% # remove excluded participants
+  mutate(Dsc_C = (d.New.Lure + d.New.Old)*-0.5/Dsc, Rcg_C = (d.New.New + d.New.Old)*-0.5/Rcg) %>% # Calculate response bias C' (criterion c/d')
+  select(Subject, Age, Old.Old, New.Old, New.Lure, Old.Lure, New.New, Old.New, Rcg, Dsc, Dsc_C, Rcg_C, Word, Partword, Nonword, Fam.Diff, AFC, 
+         Pos1, Pos2, Pos3, RT.Diff, RT.Effect, HitRate, FARate, Counterbalance, AgeinYrs, Gender, 
+         Yrs.of.Education, Exc_type) %>%
+  mutate(Word_PWord = Word-Partword, Word_NWord = Word-Nonword) # Create two Fam "scores"
+# df = mutate(df, Dsc_norm = dplyr::normalize(df$Dsc), Rcg_norm = dplyr::normalize(df$Rcg)) # Normalize Dsc and Rcg
+df = mutate(df, Dsc_norm = scale(df$Dsc), Rcg_norm = scale(df$Rcg)) # Normalize Dsc and Rcg
+
+### Identify and filter outliers in Dsc and Rcg
+out_list_dsc = vector(mode='list') # List of outliers in Dsc
+for (i in 1:length(df$Subject)){
+if (abs(df$Dsc[i] - mean(df$Dsc)) > sd(df$Dsc, na.rm=TRUE)*2){
+out_list_dsc = append(out_list_dsc, df$Subject[i])}
+}
+out_list_rcg = vector(mode='list') # List of outliers in Rcg
+for (i in 1:length(df$Subject)){
+if (abs(df$Rcg[i] - mean(df$Rcg)) > sd(df$Rcg, na.rm=TRUE)*2){
+out_list_rcg = append(out_list_rcg, df$Subject[i])}
+}
+df.out = df # Df before removing the outliers
+df = df %>%
+  filter(!Subject %in% out_list_dsc) %>% # Remove all outliers from the DF
+  filter(!Subject %in% out_list_rcg)
+
+str(df)
+summary(df)
+
+### Contrast code categorical variables
+df$Age = as.factor(df$Age)
+df = mutate(df, coded_Age = Age)
+contrasts(df$coded_Age) = contr.treatment(2)
+
+df.out$Age = as.factor(df.out$Age)
+df.out = mutate(df.out, coded_Age = Age)
+contrasts(df.out$coded_Age) = contr.treatment(2)
+
+### Filter out exclusion and outliers from rtdf
+rtdf = rtdf_raw %>%
+  filter(!Subject %in% exc_list$Subject) %>%
+  filter(!Subject %in% out_list_dsc) %>%
+  filter(!Subject %in% out_list_rcg)
+
+rtdf$Block = as.factor(rtdf$Block)
+rtdf$Position = as.numeric(rtdf$Position)
+rtdf$Position = as.factor(rtdf$Position)
+rtdf$Age = as.factor(rtdf$Age)
+rtdf$Subject = as.factor(rtdf$Subject)
+summary(rtdf)
+str(rtdf)
+
+### Filter out exclusion and outliers from fadf
+fadf = fadf_raw %>%
+  filter(!Subject %in% exc_list$Subject) %>%
+  filter(!Subject %in% out_list_dsc) %>%
+  filter(!Subject %in% out_list_rcg)
+
+summary(fadf)
+str(fadf)
+```
+
+```{r Demographics}
+yasub = subset(df, Age == "YA")
+length(yasub$Subject)
+mean(yasub$AgeinYrs)
+sd(yasub$AgeinYrs)
+max(yasub$AgeinYrs)
+min(yasub$AgeinYrs)
+mean(yasub$Yrs.of.Education)
+max(yasub$Yrs.of.Education)
+min(yasub$Yrs.of.Education)
+table(yasub$Gender)
+
+oasub = subset(df, Age == "OA")
+length(oasub$Subject)
+mean(oasub$AgeinYrs)
+sd(oasub$AgeinYrs)
+max(oasub$AgeinYrs)
+min(oasub$AgeinYrs)
+mean(oasub$Yrs.of.Education)
+max(oasub$Yrs.of.Education)
+min(oasub$Yrs.of.Education)
+table(oasub$Gender)
+```
+
+
+###Results  
+####Word MST
+```{r Dataframe preparation - MST, include=FALSE}
+### Reform the data frame so item types are all in the same column "Condition"
+accuracy_df = dplyr::select(df, Subject, coded_Age, Old.Old, New.Lure, New.New) %>%
+  pivot_longer(c(Old.Old, New.Lure, New.New), names_to = "Condition", values_to = "Accuracy")
+accuracy_df$Condition = as.factor(accuracy_df$Condition)
+accuracy_df = mutate(accuracy_df, coded_mstcond = Condition)
+contrasts(accuracy_df$coded_mstcond) = contr.treatment(3)
+accuracy_df$Subject = unlist(accuracy_df$Subject)
+
+# By score type
+dscrcg_df = select(df, Subject, coded_Age, Dsc, Rcg, Dsc_norm, Rcg_norm)
+dscrcg_df = pivot_longer(dscrcg_df, cols = c("Dsc", "Rcg"), names_to = "MemType", values_to = "Score")
+dscrcg_df$MemType = as.factor(dscrcg_df$MemType)
+dscrcg_df = mutate(dscrcg_df, coded_type = MemType)
+dsc_df = filter(dscrcg_df, MemType == "Dsc")
+rcg_df = filter(dscrcg_df, MemType == "Rcg")
+```
+
+```{r MST analysis 1. ANOVA, include=FALSE}
+## -------------------------------- Mixed Effects ANOVA -------------------------------------- ##
+# 2 (Age) x 3 (Condition) mixed ANOVA with lmer() and anova()
+mst_accuracy =lmerTest::lmer(Accuracy ~ as.factor(coded_Age)*as.factor(Condition) + (1|Subject), data=accuracy_df)
+summary(mst_accuracy) # Check lmer results
+anova(mst_accuracy, type='III') # Convert to F statistics
+# Effect size
+eta_squared(mst_accuracy)
+
+## --------------- Post-hoc analysis --------------------- ##
+# Main effect post-hoc
+emmeans(mst_accuracy, list(pairwise ~ as.factor(Condition)), adjust="bonferroni")
+# Interaction post-hoc
+mst_simpleeffects = emmeans(mst_accuracy, ~coded_Age|as.factor(Condition), adjust="bonferroni")
+mst_simpleeffects
+test(pairs(mst_simpleeffects), joint = TRUE)
+```
+
+```{r MST analysis 2. Interaction}
+# Dsc-Rcg x Age Interaction 1 (ANOVA)
+interaction = lmer(Score ~ coded_Age*coded_type + (1|Subject), data = dscrcg_df)
+anova(interaction)
+# Effect size
+eta_squared(interaction)
+# Post-hoc - Pairwise comparison
+emmeans(interaction, list(pairwise ~ coded_Age|coded_type), adjust="bonferroni")
+
+# Individual t-tests
+t_test(Score ~ coded_Age, data = dsc_df, var.equal = TRUE)
+cohens_d(Score ~ coded_Age, data = dsc_df)
+t_test(Score ~ coded_Age, data = rcg_df, var.equal = TRUE)
+cohens_d(Score ~ coded_Age, data = rcg_df)
+
+# Dsc-Rcg x Age Interaction 2 (Bayes ANOVA)
+anovaBF(Score ~ coded_Age*coded_type, data = dscrcg_df, whichRandom = "Subject", whichModels = "bottom")
+```
+
+```{r MST analysis 3. Response bias c'}
+# C' = (z(hit)+z(FA)*-0.5/(z(hit)-z(FA))) = criterion c / d-prime
+x = filter(df, Age == "OA")
+y = filter(df, Age == 'YA')
+mean(x$Dsc_C)
+mean(x$Rcg_C)
+mean(y$Dsc_C)
+mean(y$Rcg_C)
+
+## ------------- Age-wise comparison of Criterion C' ------------- ##
+t_test(Dsc_C ~ Age, data = df, var.equal = TRUE)
+cohens_d(Dsc_C ~ Age, data = df)
+t_test(Rcg_C ~ Age, data = df, var.equal = TRUE)
+cohens_d(Rcg_C ~ Age, data = df)
+```
+
+
+
+####SL
+#####Target Detection Task
+```{r TD analysis 0. Average hit rate, include=FALSE}
+hitrate = fadf %>%
+  group_by(Subject, Age) %>%
+  summarise(mean(HitRate))
+y_hitrate = subset(hitrate, Age == 1)
+o_hitrate = subset(hitrate, Age == 0)
+avr_hitrate = round(mean(hitrate$`mean(HitRate)`)*100, 1)
+y_avr_hitrate = round(mean(y_hitrate$`mean(HitRate)`)*100, 1)
+o_avr_hitrate = round(mean(o_hitrate$`mean(HitRate)`)*100, 1)
+y_avr_hitrate
+o_avr_hitrate
+```
+
+```{r TD analysis 1. ANOVA for RT by position, include=FALSE}
+## -------------------------------- Mixed Effects ANOVA -------------------------------------- ##
+# 2 (Age) x 3 (Syllable position) mixed ANOVA with block (1, 2, 3) as covariate using lmer and anova()
+position_full = lmer(RT ~  as.factor(Position)*as.factor(Age) + (1 | Subject), data = rtdf)
+anova(position_full)
+summary(aov(RT ~ Position*as.factor(Age) + Error(Subject), data = rtdf))
+# Full model
+anova(lmer(RT ~  as.factor(Block)*as.factor(Position) + as.factor(Age) + (1 | Subject), data = rtdf))
+# Effect size
+eta_squared(position_full)
+
+## ----------------------------- Post-hoc - Linear contrast ---------------------------- ##
+# Preparation
+c1 = c(-1, 0, 1) # Contrast the Position levels
+c2 = c(-1, 0.5, 0.5)
+mat = cbind(c1,c2) # combined the above 2 lines into a matrix
+rtdf$Position = as.factor(rtdf$Position) # tell R that the matrix gives the contrasts you want
+contrasts(rtdf$Position) = mat
+# Fit a mixed effects ANOVA and run polynomial contrasts
+polynomialcntrsttmodel <- aov(RT ~ Position + Error(Subject), data = rtdf)
+summary(polynomialcntrsttmodel)
+summary(polynomialcntrsttmodel, split=list(Position=list("Linear"=1, "Quadratic" = 2)))
+# Effect size
+eta_squared(polynomialcntrsttmodel)
+
+## ------------------------- Post-hoc - Block x Position interaction ---------------------- ##
+rt_simpleeffects = emmeans(position_full, ~as.factor(Position)|as.factor(Block), adjust="bonferroni")
+rt_simpleeffects
+test(pairs(rt_simpleeffects), joint = TRUE)
+```
+
+```{r TD analysis 2. Bayesian ANOVA, include=FALSE}
+bayesH0 = anovaBF(RT ~ Position:Age + Subject, data = rtdf, whichRandom = "Subject") # Bayesian mixed effects ANOVA
+bayesH0 #H0 = there IS age-position interaction
+bayesH1 = anovaBF(RT ~ Position:Age + Subject, data = rtdf, whichRandom = "Subject", whichModels = "top",
+                  progress = FALSE) # Bayesian mixed effects ANOVA
+bayesH1 #H1 = there IS NO age-position interaction
+anovaBF(RT ~ Position:Age + Subject, data = rtdf, whichRandom = "Subject", whichModels = "all",
+                  progress = FALSE)
+```
+Bayes factor analysis -- Whether an addition of a main/interaction term improves the basic model (RT ~ Subject)
+
+Bayes factor top-down analysis -- Whether an omission of a main/interaction term improves the full model 
+Bayes Factor = (likelihood of data given H1)/(likelihood of data given H0)
+- When over one, means H1 explains the data better than H0
+- Less than one, H0 is the more suitable explanation
+- Close to one, can't say much about which H is better (weak evidence)
+- H01 = BF in favor of H0 over H1
+- H10 = BF in favor of H1 over H0
+- H0 --> There is interaction
+- H1 --> There is no interaction
+
+```{r TD analysis 3. RT scores, include=FALSE}
+summary(aov(RT.Effect ~ coded_Age, data=df))
+```
+
+#####Rating Task
+```{r Dataframe preparation - Rating, include=FALSE}
+# Word types
+longer_df = pivot_longer(df, cols=c('Word', 'Partword', 'Nonword'), names_to = 'word_type', values_to = 'ratings') %>%
+  dplyr::select(Subject, Age, coded_Age, word_type, ratings, Counterbalance)
+longer_df$word_type = as.factor(longer_df$word_type)
+longer_df$Subject = unlist(longer_df$Subject)
+
+# W-PW, W-NW scores
+longer_df2 = pivot_longer(df, cols=c('Word_PWord', 'Word_NWord'), names_to = 'word_type', values_to = 'ratings') %>%
+  dplyr::select(Subject, Age, coded_Age, word_type, ratings, Counterbalance)
+longer_df2$word_type = as.factor(longer_df2$word_type)
+longer_df2$Subject = unlist(longer_df2$Subject)
+```
+
+```{r Rating analysis 1. ANOVA, include=FALSE}
+## ------------------------- Mixed Effects ANOVA ------------------------------ ##
+### 2 (Age) x 3 (Word condition) mixed ANOVA with lmer and anova()
+fam_anova =lmerTest::lmer(ratings ~ coded_Age*as.factor(word_type) + (1|Subject), data=longer_df)
+summary(fam_anova)
+anova(fam_anova, type='III')
+# Effect size
+eta_squared(fam_anova)
+
+## ------------------------- Post-hoc - Pairwise comparison ------------------------------ ##
+# Main effect post-hoc
+emmeans(fam_anova, list(pairwise ~ as.factor(word_type)), adjust="bonferroni")
+# Age-Type Interaction post-hoc
+fam_simpleeffects = emmeans(fam_anova, ~coded_Age|as.factor(word_type), adjust="bonferroni")
+test(pairs(fam_simpleeffects), joint = TRUE)
+```
+
+```{r Rating analysis 2. Interaction, include=FALSE}
+# Interaction 1. ANOVA
+fam_interaction = lmer(ratings ~ word_type*coded_Age + (1|Subject), data = longer_df2)
+anova(fam_interaction)
+# Effect size
+eta_squared(fam_interaction)
+# Post-hoc - Pairwise comparison
+emmeans(fam_interaction, pairwise ~ coded_Age|word_type, adjust="Bonferonni")
+
+# Interaction 2. Bayes ANOVA
+anovaBF(ratings ~ word_type*coded_Age, data = longer_df2, whichModels = "top")
+```
+
+
+#####2-AFC Recognition Task  
+```{r AFC analysis 1. Chance level, include=FALSE}
+df_ya = subset(df, Age=='YA')
+df_oa = subset(df, Age=='OA')
+round(mean(df_ya$AFC),4)
+round(mean(df_oa$AFC),4)
+
+t.test(df$AFC, mu=0.5)
+t.test(df_ya$AFC, mu=0.5)
+t.test(df_oa$AFC, mu=0.5)
+```
+
+```{r AFC analysis 2. ANOVA, include=FALSE}
+t_test(AFC ~ coded_Age, data=df, var.equal = TRUE)
+
+# Bayesian ANOVA
+anovaBF(AFC ~ coded_Age, data = df, whichModels = "top")
+```
+
+#####Regression analysis  
+```{r Follow-up analysis 1. Regression, include=FALSE}
+dsc_age_dsc = lm(Word_PWord ~ coded_Age+Dsc, data = df)
+summary(dsc_age_dsc)
+dsc_age_alone = lm(Word_PWord ~ coded_Age, data = df)
+summary(dsc_age_alone)
+dsc_dsc_alone = lm(Word_PWord ~ Dsc, data = df)
+summary(dsc_dsc_alone)
+anova(dsc_age_dsc,dsc_age_alone)
+anova(dsc_age_dsc, dsc_dsc_alone)
+```
+
+```{r Follow-up analysis 2. Mediation}
+library(mediation)
+
+fit.mediator = lm(Dsc ~ coded_Age, data=df)
+fit.dv = lm(Word_PWord ~ coded_Age + Dsc, data=df)
+
+results = mediation::mediate(fit.mediator, fit.dv, treat='coded_Age', mediator='Dsc', boot=T)
+summary(results)
+summary(fit.mediator) # DIRECT EFFECT of age on discrimination (= 0.196*)
+summary(fit.dv) # INDIRECT EFFECT of age (= 0.17) and discrimination (= 0.34**) on W-PW
+summary(lm(Word_PWord ~ coded_Age, data=df)) # DIRECT EFFECT of age on W-PW (= 0.24*)
+```
+Causal Mediation Analysis 
+
+Nonparametric Bootstrap Confidence Intervals with the Percentile Method
+
+               Estimate 95% CI Lower 95% CI Upper p-value  
+ACME            0.07027      0.00313         0.18   0.028 *
+ADE             0.10526     -0.12151         0.34   0.344  
+Total Effect    0.17553     -0.03871         0.42   0.136  
+Prop. Mediated  0.40033     -2.44498         2.71   0.160  
+
+Sample Size Used: 120 
+
+Simulations: 1000 
+
+ACME = Average causal mediation effects (=indirect effect of Age on W-PW through the Dsc)
+ADE = Average direct effects (=direct effect of Age on W-PW (when Dsc is controlled))
+Total Effect = Direct + Indirect effect of Age on W-PW
+Prop.Mediated = Proportion of Age effect that goes through Dsc (=ACME/Total effect)
+
+###Figures
+####Figure1. MST Accuracy
+```{r MST accuracy rate, include=FALSE}
+small_df = dplyr::select(df, Age, Old.Old, New.Lure, New.New)
+small_df$Old.Old = small_df$Old.Old*100
+small_df$New.Lure = small_df$New.Lure*100
+small_df$New.New = small_df$New.New*100
+
+small_df = small_df %>%
+  group_by(Age) %>%
+  summarise(Old = mean(Old.Old), Old.ci = confidence_interval(Old.Old),
+            Lure = mean(New.Lure), Lure.ci = confidence_interval(New.Lure),
+            New = mean(New.New), New.ci = confidence_interval(New.New))
+longer_df1 = pivot_longer(small_df, c(Old, New, Lure), names_to = 'Condition', values_to = 'Mean') %>%
+  dplyr::select(Age, Condition, Mean)
+longer_df2 = pivot_longer(small_df, ends_with(".ci"), names_to = 'Condition', values_to = 'CIs') %>%
+  dplyr::select(Age, Condition, CIs)
+longer_df = cbind(longer_df1, longer_df2[,3]) 
+
+ggplot(longer_df, aes(x = factor(Condition, levels = c("Old", "Lure", "New")), y = Mean, fill = Age), narm = TRUE) +
+  geom_bar(stat="identity", width=.9, position=position_dodge(.9), color="black") +
+  scale_fill_brewer(palette = "Paired") +
+  xlab("") +
+  ylab("Mean accuracy rate (%) ") +
+  theme(axis.line = element_line(color = 'black'), 
+        axis.text.x = element_text(size=50, color="black"), axis.title.x = element_text(size=25),
+        axis.text.y = element_text(size=40), axis.title.y = element_text(size=50),
+        legend.text=element_text(size=45)) +
+  geom_errorbar(aes(ymin=Mean-CIs, ymax=Mean+CIs), width=.2,
+                 position=position_dodge(.9)) +
+  scale_y_continuous(expand = c(0, 0), limits = c(0, 95.1)) +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), aspect.ratio = 1/1)
+
+ggsave("accuracyrate.png", width=297, height=210, units='mm')
+ggsave("accuracyrate.svg", width=297, height=210, units='mm')
+
+```
+
+####Figure2. MST Dsc vs Rcg
+```{r MST Dsc and Rcg bar graph, include=FALSE}
+small_df = dplyr::select(df, Age, Dsc_norm, Rcg_norm) %>%
+  group_by(Age) %>%
+  summarise(Discrimination = mean(Dsc_norm), Dsc.ci = confidence_interval(Dsc_norm),
+            Recognition = mean(Rcg_norm), Rcg.ci = confidence_interval(Rcg_norm))
+longer_df1 = pivot_longer(small_df, c(Discrimination, Recognition), names_to = 'Condition', values_to = 'Mean') %>%
+  dplyr::select(Age, Condition, Mean)
+longer_df2 = pivot_longer(small_df, ends_with(".ci"), names_to = 'Condition', values_to = 'CIs') %>%
+  dplyr::select(Age, Condition, CIs)
+longer_df_s = cbind(longer_df1, longer_df2[,3]) 
+
+
+ggplot(longer_df_s, aes(x = Condition, y = Mean, fill = Age), narm = TRUE) +
+  geom_bar(stat="identity", width=.9, position=position_dodge(.9), color="black") +
+  scale_fill_brewer(palette = "Paired") +
+  xlab("") +
+  ylab("Average d'") +
+  theme(axis.line = element_line(color = 'black'), 
+        axis.text.x = element_text(size=50, color="black"), axis.title.x = element_text(size=25),
+        axis.text.y = element_text(size=40), axis.title.y = element_text(size=50),
+        legend.text=element_text(size=15)) +
+  geom_errorbar(aes(ymin=Mean-CIs, ymax=Mean+CIs), width=.2,
+                 position=position_dodge(.9)) +
+  scale_y_continuous(expand = c(0, 0), limits = c(0, 0.55)) +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), aspect.ratio = 1/1)
+
+ggsave("DSC_RCG.png", width=297, height=210, units='mm')
+ggsave("DSC_RCG.svg", width=297, height=210, units='mm')
+```
+
+```{r MST Dsc and Rcg bar graph - un-normalized, include=FALSE}
+small_df = dplyr::select(df, Age, Dsc, Rcg) %>%
+  group_by(Age) %>%
+  summarise(Discrimination = mean(Dsc), Dsc.ci = confidence_interval(Dsc),
+            Recognition = mean(Rcg), Rcg.ci = confidence_interval(Rcg))
+longer_df1 = pivot_longer(small_df, c(Discrimination, Recognition), names_to = 'Condition', values_to = 'Mean') %>%
+  dplyr::select(Age, Condition, Mean)
+longer_df2 = pivot_longer(small_df, ends_with(".ci"), names_to = 'Condition', values_to = 'CIs') %>%
+  dplyr::select(Age, Condition, CIs)
+longer_df_s = cbind(longer_df1, longer_df2[,3]) 
+
+
+ggplot(longer_df_s, aes(x = Condition, y = Mean, fill = Age), narm = TRUE) +
+  geom_bar(stat="identity", width=.9, position=position_dodge(.9), color="black") +
+  scale_fill_brewer(palette = "Paired") +
+  xlab("") +
+  ylab("Average d'") +
+  theme(axis.line = element_line(color = 'black'), 
+        axis.text.x = element_text(size=40, color="black"), axis.title.x = element_text(size=20),
+        axis.text.y = element_text(size=40), axis.title.y = element_text(size=50),
+        legend.text=element_text(size=15)) +
+  geom_errorbar(aes(ymin=Mean-CIs, ymax=Mean+CIs), width=.2,
+                 position=position_dodge(.9)) +
+  scale_y_continuous(expand = c(0, 0), limits = c(0, 2.95)) +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), aspect.ratio = 1/1, legend.position = "none")
+
+ggsave("DSC_RCG2.png", width=297, height=210, units='mm')
+ggsave("DSC_RCG2.svg", width=297, height=210, units='mm')
+```
+
+####Figure3. RT per age
+```{r Position effect - YA vs OA, include=FALSE}
+rtdf$Position = as.factor(rtdf$Position)
+
+# Summarize based on syllable positions
+sum_age = rtdf %>%
+  dplyr::group_by(Age, Position) %>%
+  dplyr::summarise(mean = mean(RT), CI = confidence_interval(RT)) 
+sum_age$Age = ifelse(sum_age$Age==0, "OA", "YA")
+
+# Plot
+panelA = ggplot(sum_age, aes(x=Position, y=mean, colour=Age, group=Age)) +
+  geom_line()+
+  scale_colour_brewer(palette="Paired") +
+  ylab('Mean RT (ms)') +
+  xlab('Syllable position') +
+  ggtitle('a') +
+  geom_errorbar(aes(ymin = mean-CI, ymax = mean+CI, width=0.05), color='black') +
+  theme_bw(base_size=12) +
+#   theme(axis.line = element_line(color = 'black'),
+#         axis.text.x = element_text(size=40), axis.text.y = element_text(size=40), 
+#         axis.title.x = element_text(size=50), axis.title.y = element_text(size=50),
+#         legend.text=element_text(size=20)) +
+# ## Uncomment for a blank background
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), 
+        panel.border = element_blank(), panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"), title = element_text(size=14),
+        aspect.ratio = 1/1, legend.position="none")
+panelA
+
+ggsave("RT_agewise.png", width=297, height=210, units='mm')
+ggsave("RT_agewise.svg", width=297, height=210, units='mm')
+
+```
+
+####Figure4. Fam rating
+```{r Rating, include=FALSE}
+explicit_df = dplyr::select(df, Age, Word, Partword, Nonword, AFC) %>%
+  group_by(Age) %>%
+  summarise(word.ci = confidence_interval(Word), Word = mean(Word), 
+            partword.ci = confidence_interval(Partword), Partword = mean(Partword), 
+            nonword.ci = confidence_interval(Nonword), Nonword = mean(Nonword))
+
+longer_mean = pivot_longer(explicit_df, c(Word, Partword, Nonword), names_to = 'Condition', values_to = 'Mean') %>%
+  dplyr::select(Age, Condition, Mean)
+longer_ci = pivot_longer(explicit_df, ends_with(".ci"), names_to = 'Condition', values_to = 'CIs') %>%
+  dplyr::select(Age, Condition, CIs)
+ex_longer = cbind(longer_mean, longer_ci[,3]) 
+
+
+panelB = ggplot(ex_longer, aes(x = Condition, y = Mean, fill = Age), narm = TRUE) +
+  geom_bar(color='black',stat="identity", width=.9, position=position_dodge(.9)) +
+  scale_fill_brewer(palette = "Paired") +  
+  xlab("") +
+  ylab("Average rating") +
+  ggtitle('b') +
+  # theme(axis.line = element_line(color = 'black'), 
+  #       axis.text.x = element_text(size=50, color="black"), axis.title.x = element_text(size=25),
+  #       axis.text.y = element_text(size=40), axis.title.y = element_text(size=50),
+  #       legend.text=element_text(size=15)) +
+  geom_errorbar(aes(ymin=Mean-CIs, ymax=Mean+CIs), width=.2,
+                 position=position_dodge(.9)) +
+  coord_cartesian(ylim=c(2, 3.5)) +
+  theme_bw(base_size = 12) +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), 
+        panel.border = element_blank(), panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"),
+        aspect.ratio = 1/1, legend.position="none", title = element_text(size=14),
+        axis.text.x = element_text(size=10, color="black"))
+
+
+ggsave("familiarityrate.png", width=297, height=210, units='mm')
+ggsave("familiarityrate.svg", width=297, height=210, units='mm')
+
+```
+
+####Figure5. Fam scores
+```{R Rating scores, eval=FALSE, include=FALSE}
+ratingscore_df = dplyr::select(df, Age, Word_PWord, Word_NWord) %>%
+  group_by(Age) %>%
+  summarise(Word_PWord.ci = confidence_interval(Word_PWord), Word_PWord = mean(Word_PWord),
+            Word_NWord.ci = confidence_interval(Word_NWord), Word_NWord = mean(Word_NWord))
+temp_1 = ratingscore_df %>%
+  pivot_longer(col = ends_with('Word'), names_to="Type", values_to = "score") %>%
+  select(Age, Type, score)
+temp_2 = ratingscore_df %>% 
+  pivot_longer(col = ends_with('ci'), names_to="Type2", values_to = "CI") %>%
+  select(Age, Type2, CI)
+ratingscore_df = cbind(temp_1, temp_2[,3]) 
+
+
+panelC = ggplot(ratingscore_df, aes(x = Type, y = score, fill = Age), narm = TRUE) +
+  geom_bar(color='black',stat="identity", width=.9, position=position_dodge(.9)) +
+  scale_fill_brewer(palette = "Paired") +
+  scale_x_discrete(labels=c('W-NW', 'W-PW')) +
+  ylab("Average rating difference") +
+  xlab("") +
+  ggtitle('c') +
+  # theme(axis.line = element_line(color = 'black'), 
+  #       axis.text.x = element_text(size=50), axis.title.x = element_text(size=25),
+  #       axis.text.y = element_text(size=40), axis.title.y = element_text(size=50),
+  #       legend.text=element_text(size=15)) +
+  geom_errorbar(aes(ymin=score-CI, ymax=score+CI), width=.15,
+                position=position_dodge(.9)) +
+  scale_y_continuous(expand = c(0, 0), limits = c(0, 1.01)) +
+  theme_bw(base_size=12) +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), 
+        panel.border = element_blank(), panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"),
+        aspect.ratio = 1/1, legend.position='none', title = element_text(size=14),
+        axis.text.x = element_text(size=12, color="black"))
+
+
+#ggsave("ratingscore.svg", width=297, height=210, units='mm')
+#ggsave("ratingscore.png", width=297, height=210, units='mm')
+
+```
+
+####Figure6. 2AFC
+```{R AFC, include=FALSE}
+afc_df = dplyr::select(df, Age, AFC) %>%
+  mutate(AFC_percent = AFC*100) %>%
+  group_by(Age) %>%
+  summarise(AFC.ci = confidence_interval(AFC_percent), AFC = mean(AFC_percent))
+
+panelD = ggplot(afc_df, aes(x = Age, y = AFC, fill = Age), narm = TRUE) +
+  geom_bar(color='black',stat="identity", width=.9, position=position_dodge(.9)) +
+  scale_fill_brewer(palette = "Paired") +  
+  ylab("Average accuracy (%)") +
+  xlab("") +
+  ggtitle('d') +
+  # theme(axis.line = element_line(color = 'black'), 
+  #       axis.text.x = element_text(size=50), axis.title.x = element_text(size=50),
+  #       axis.text.y = element_text(size=40), axis.title.y = element_text(size=50),
+  #       legend.text=element_text(size=15))+
+  geom_errorbar(aes(ymin=AFC-AFC.ci, ymax=AFC+AFC.ci), width=.15,
+                 position=position_dodge(.9)) +
+  scale_y_continuous(expand=c(0,0), limits = c(0, 81)) +
+  theme_bw(base_size = 12) +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), 
+        panel.border = element_blank(), panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"), title = element_text(size=14), 
+        aspect.ratio = 2/1, axis.text.x=element_text(size=12, color="black"))
+panelD
+
+ggsave("afc.png", width=297, height=210, units='mm')
+ggsave("afc.svg", width=297, height=210, units='mm')
+
+ggarrange(panelA, panelB, panelC, panelD, nrow=2, ncol=2)
+ggsave("slresults_new.png", width=5.5, height=5.5, units='in')
+
+```
+
+####Supplementary Figure 1. RT - Block x Position
+```{r Visualize Block x Position, include=FALSE}
+# Summarize based on syllable positions and Blocks
+sum_PO = rtdf %>%
+  dplyr::group_by(Position, Block) %>%
+  dplyr::summarise(mean = mean(RT), CI = confidence_interval(RT))
+sum_PO$Position = as.factor(sum_PO$Position)
+
+# Plot
+ggplot(sum_PO, aes(x=Position, y=mean, color=Block, group=Block)) +
+  #geom_bar(stat = "identity", fill = 'black', alpha = 0.5, width = 0.5) + #For bar graph
+  geom_line(size=2) +
+  scale_colour_brewer(palette = "Set1")+
+  ylab('Mean RT (ms)') +
+  xlab('Syllable position') +
+  theme(axis.line = element_line(color = 'black'), 
+        axis.text.x = element_text(size=40, color="black"), axis.title.x = element_text(size=50),
+        axis.text.y = element_text(size=40, color="black"), axis.title.y = element_text(size=50),
+        legend.text=element_text(size=15))+
+  geom_errorbar(aes(ymin = mean-CI, ymax = mean+CI, width=0.05), color="black", size=1) +
+  theme(axis.line = element_line(color = 'black')) +
+## Uncomment for a blank background
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"))
+
+ggsave("pos-block.png", width=297, height=210, units='mm')
+ggsave("pos-block.svg", width=297, height=210, units='mm')
+```
+
+####Correlation table
+```{r Correlation table}
+library(apaTables)
+correl_df = df %>%
+  filter(Age == "YA") %>%
+  select(Rcg, Dsc, Word_PWord, Word_NWord, AFC, RT.Effect)
+
+apa.cor.table(correl_df)
+apa.cor.table(correl_df, filename="ex.CorTable1.doc")
+```
+####ROC
+```{r ROC plot}
+#library(plotROC)
+#ggplot(df, aes(d=New.Old, m=New.Lure)) + geom_roc()
+# Criterion C
+
+
+set.seed(2529)
+D.ex <- rbinom(200, size = 1, prob = .5)
+M1 <- rnorm(200, mean = D.ex, sd = .65)
+M2 <- rnorm(200, mean = D.ex, sd = 1.5)
+
+test <- data.frame(D = D.ex, D.str = c("Healthy", "Ill")[D.ex + 1], 
+                   M1 = M1, M2 = M2, stringsAsFactors = FALSE)
+```
+
+

@@ -1,0 +1,18 @@
+"0","smst_responses_all = read.csv(""./smst_responses_similar.csv"")"
+"0","rating_responses_all = read.csv(""./similaritydata.csv"")"
+"0",""
+"0","rating_responses = rating_responses_all %>%"
+"0","  filter(X != ""Subject"") %>%"
+"0","  select(!X.1 & !X.2)"
+"0","rating_responses = rename(rating_responses, Subjects = X)"
+"0",""
+"0","## Alphabetically order columns "
+"0","smst_responses = smst_responses_all[, order(names(smst_responses_all))]"
+"0","smst_responses = smst_responses[,c(ncol(smst_responses),1:(ncol(smst_responses)-1))]"
+"0",""
+"0","## Get BL's similarity response"
+"0","bl_rating = filter(rating_responses, Subjects == 0)"
+"0","smst_responses = rbind(smst_responses, bl_rating)"
+"2","Error in match.names(clabs, names(xi)) : 
+  names do not match previous names
+"

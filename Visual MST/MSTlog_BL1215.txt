@@ -1,0 +1,635 @@
+MST version 0.96
+Wed Dec 15 15:07:19 2021
+Study phase
+ID: BL1215
+Set: Set D
+     internal index 1
+Randomization based on ID
+Dur: 2.000, ISI:0.500, Self-paced:1, Full-Screen:, nSet size: 0
+Study items (128)
+016a.jpg	168a.jpg
+123a.jpg	192a.jpg
+067a.jpg	152a.jpg
+145a.jpg	112a.jpg
+083a.jpg	155a.jpg
+079a.jpg	082a.jpg
+136a.jpg	089a.jpg
+080a.jpg	034a.jpg
+095a.jpg	128a.jpg
+186a.jpg	046a.jpg
+015a.jpg	180a.jpg
+037a.jpg	111a.jpg
+062a.jpg	187a.jpg
+147a.jpg	063a.jpg
+013a.jpg	023a.jpg
+167a.jpg	048a.jpg
+007a.jpg	142a.jpg
+119a.jpg	014a.jpg
+189a.jpg	177a.jpg
+163a.jpg	072a.jpg
+065a.jpg	073a.jpg
+030a.jpg	052a.jpg
+137a.jpg	113a.jpg
+018a.jpg	114a.jpg
+076a.jpg	090a.jpg
+141a.jpg	061a.jpg
+081a.jpg	077a.jpg
+188a.jpg	170a.jpg
+161a.jpg	039a.jpg
+157a.jpg	005a.jpg
+124a.jpg	162a.jpg
+038a.jpg	101a.jpg
+012a.jpg	040a.jpg
+151a.jpg	075a.jpg
+035a.jpg	153a.jpg
+069a.jpg	166a.jpg
+093a.jpg	131a.jpg
+104a.jpg	088a.jpg
+121a.jpg	047a.jpg
+097a.jpg	175a.jpg
+053a.jpg	051a.jpg
+154a.jpg	191a.jpg
+169a.jpg	096a.jpg
+050a.jpg	174a.jpg
+029a.jpg	055a.jpg
+102a.jpg	184a.jpg
+086a.jpg	135a.jpg
+044a.jpg	117a.jpg
+031a.jpg	146a.jpg
+107a.jpg	130a.jpg
+133a.jpg	126a.jpg
+060a.jpg	115a.jpg
+091a.jpg	087a.jpg
+160a.jpg	144a.jpg
+009a.jpg	001a.jpg
+064a.jpg	066a.jpg
+179a.jpg	058a.jpg
+011a.jpg	176a.jpg
+149a.jpg	139a.jpg
+185a.jpg	106a.jpg
+078a.jpg	074a.jpg
+002a.jpg	108a.jpg
+036a.jpg	070a.jpg
+158a.jpg	118a.jpg
+Test items
+Repeat	Lure	Foil
+192a.jpg	016b.jpg	105a.jpg
+128a.jpg	160b.jpg	140a.jpg
+064a.jpg	161b.jpg	024a.jpg
+023a.jpg	065b.jpg	059a.jpg
+039a.jpg	089b.jpg	103a.jpg
+170a.jpg	139b.jpg	120a.jpg
+124a.jpg	079b.jpg	092a.jpg
+012a.jpg	101b.jpg	045a.jpg
+186a.jpg	074b.jpg	148a.jpg
+157a.jpg	087b.jpg	159a.jpg
+048a.jpg	115b.jpg	138a.jpg
+113a.jpg	145b.jpg	182a.jpg
+015a.jpg	169b.jpg	134a.jpg
+102a.jpg	095b.jpg	021a.jpg
+123a.jpg	038b.jpg	042a.jpg
+155a.jpg	061b.jpg	056a.jpg
+067a.jpg	112b.jpg	084a.jpg
+168a.jpg	069b.jpg	099a.jpg
+136a.jpg	179b.jpg	068a.jpg
+007a.jpg	058b.jpg	171a.jpg
+081a.jpg	111b.jpg	127a.jpg
+147a.jpg	188b.jpg	004a.jpg
+046a.jpg	002b.jpg	164a.jpg
+040a.jpg	162b.jpg	100a.jpg
+096a.jpg	029b.jpg	129a.jpg
+158a.jpg	047b.jpg	132a.jpg
+163a.jpg	108b.jpg	033a.jpg
+152a.jpg	166b.jpg	178a.jpg
+104a.jpg	018b.jpg	190a.jpg
+037a.jpg	184b.jpg	085a.jpg
+009a.jpg	083b.jpg	165a.jpg
+175a.jpg	060b.jpg	020a.jpg
+076a.jpg	151b.jpg	156a.jpg
+149a.jpg	093b.jpg	125a.jpg
+066a.jpg	185b.jpg	057a.jpg
+144a.jpg	075b.jpg	122a.jpg
+091a.jpg	082b.jpg	041a.jpg
+119a.jpg	088b.jpg	172a.jpg
+005a.jpg	187b.jpg	183a.jpg
+014a.jpg	030b.jpg	017a.jpg
+167a.jpg	133b.jpg	109a.jpg
+086a.jpg	107b.jpg	043a.jpg
+077a.jpg	072b.jpg	025a.jpg
+052a.jpg	080b.jpg	181a.jpg
+117a.jpg	191b.jpg	010a.jpg
+126a.jpg	174b.jpg	028a.jpg
+053a.jpg	031b.jpg	027a.jpg
+011a.jpg	137b.jpg	098a.jpg
+035a.jpg	176b.jpg	022a.jpg
+051a.jpg	001b.jpg	173a.jpg
+114a.jpg	062b.jpg	019a.jpg
+142a.jpg	050b.jpg	026a.jpg
+118a.jpg	055b.jpg	054a.jpg
+070a.jpg	034b.jpg	008a.jpg
+180a.jpg	154b.jpg	150a.jpg
+153a.jpg	036b.jpg	049a.jpg
+146a.jpg	013b.jpg	116a.jpg
+141a.jpg	097b.jpg	032a.jpg
+106a.jpg	135b.jpg	003a.jpg
+078a.jpg	063b.jpg	006a.jpg
+090a.jpg	131b.jpg	071a.jpg
+044a.jpg	130b.jpg	110a.jpg
+177a.jpg	073b.jpg	143a.jpg
+121a.jpg	189b.jpg	094a.jpg
+Study phase started at: Wed Dec 15 15:07:19 2021
+Trial	Resp	RT	Img
+1	3	2582	016a.jpg
+2	1	1915	168a.jpg
+3	3	2084	123a.jpg
+4	1	1888	192a.jpg
+5	3	1781	067a.jpg
+6	1	2496	152a.jpg
+7	1	2020	145a.jpg
+8	3	4324	112a.jpg
+9	1	2044	083a.jpg
+10	1	2016	155a.jpg
+11	1	2067	079a.jpg
+12	1	3178	082a.jpg
+13	3	2437	136a.jpg
+14	3	2466	089a.jpg
+15	1	2843	080a.jpg
+16	1	2067	034a.jpg
+17	3	1984	095a.jpg
+18	1	1998	128a.jpg
+19	1	2594	186a.jpg
+20	3	2063	046a.jpg
+21	1	1993	015a.jpg
+22	1	2248	180a.jpg
+23	1	2341	037a.jpg
+24	1	2095	111a.jpg
+25	1	2812	062a.jpg
+26	1	1904	187a.jpg
+27	1	1788	147a.jpg
+28	3	1880	063a.jpg
+29	1	1897	013a.jpg
+30	3	2096	023a.jpg
+31	1	1844	167a.jpg
+32	1	1815	048a.jpg
+33	1	2099	007a.jpg
+34	1	2076	142a.jpg
+35	1	2002	119a.jpg
+36	1	1886	014a.jpg
+37	3	2378	189a.jpg
+38	3	2124	177a.jpg
+39	3	2185	163a.jpg
+40	1	3764	072a.jpg
+41	1	2071	065a.jpg
+42	3	3213	073a.jpg
+43	3	2099	030a.jpg
+44	1	2155	052a.jpg
+45	3	2098	137a.jpg
+46	3	2252	113a.jpg
+47	1	2078	018a.jpg
+48	3	1877	114a.jpg
+49	3	1695	076a.jpg
+50	3	1754	090a.jpg
+51	3	2162	141a.jpg
+52	1	2775	061a.jpg
+53	3	2158	081a.jpg
+54	3	1877	077a.jpg
+55	1	2069	188a.jpg
+56	3	3560	170a.jpg
+57	1	2312	161a.jpg
+58	1	2935	039a.jpg
+59	3	2993	157a.jpg
+60	1	2433	005a.jpg
+61	3	1883	124a.jpg
+62	3	2098	162a.jpg
+63	1	3485	038a.jpg
+64	3	2070	101a.jpg
+65	1	3320	012a.jpg
+66	1	2278	040a.jpg
+67	1	2290	151a.jpg
+68	3	2189	075a.jpg
+69	3	2131	035a.jpg
+70	1	1987	153a.jpg
+71	1	2134	069a.jpg
+72	1	1882	166a.jpg
+73	1	2066	093a.jpg
+74	1	3363	131a.jpg
+75	3	1890	104a.jpg
+76	3	2779	088a.jpg
+77	3	2558	121a.jpg
+78	3	1787	047a.jpg
+79	3	2431	097a.jpg
+80	3	2126	175a.jpg
+81	1	2285	053a.jpg
+82	1	2256	051a.jpg
+83	3	1951	154a.jpg
+84	1	2225	191a.jpg
+85	1	2690	169a.jpg
+86	1	2194	096a.jpg
+87	3	1851	050a.jpg
+88	3	2072	174a.jpg
+89	1	1790	029a.jpg
+90	3	1850	055a.jpg
+91	1	2954	102a.jpg
+92	1	2495	184a.jpg
+93	1	3188	086a.jpg
+94	3	2431	135a.jpg
+95	1	2348	044a.jpg
+96	3	1881	117a.jpg
+97	3	2344	031a.jpg
+98	1	2252	146a.jpg
+99	1	1895	107a.jpg
+100	1	2454	130a.jpg
+101	1	3890	133a.jpg
+102	1	2372	126a.jpg
+103	3	2433	060a.jpg
+104	3	3395	115a.jpg
+105	1	2165	091a.jpg
+106	3	2281	087a.jpg
+107	1	2130	160a.jpg
+108	3	1821	144a.jpg
+109	3	2434	009a.jpg
+110	1	1910	001a.jpg
+111	1	1973	064a.jpg
+112	3	1910	066a.jpg
+113	1	2895	179a.jpg
+114	1	2097	058a.jpg
+115	1	2471	011a.jpg
+116	3	1973	176a.jpg
+117	1	2033	149a.jpg
+118	3	1912	139a.jpg
+119	3	1888	185a.jpg
+120	1	2213	106a.jpg
+121	1	2033	078a.jpg
+122	3	1943	074a.jpg
+123	1	1842	002a.jpg
+124	1	1726	108a.jpg
+125	1	1911	036a.jpg
+126	3	2194	070a.jpg
+127	1	4426	158a.jpg
+128	1	1849	118a.jpg
+MST version 0.96
+Wed Dec 15 15:16:31 2021
+Test phase
+ID: BL1215
+Set: Set D
+     internal index 1
+Randomization based on ID
+Dur: 2.000, ISI:0.500, Self-paced:1, Full-Screen:, nSet size: 0
+Study items (128)
+016a.jpg	168a.jpg
+123a.jpg	192a.jpg
+067a.jpg	152a.jpg
+145a.jpg	112a.jpg
+083a.jpg	155a.jpg
+079a.jpg	082a.jpg
+136a.jpg	089a.jpg
+080a.jpg	034a.jpg
+095a.jpg	128a.jpg
+186a.jpg	046a.jpg
+015a.jpg	180a.jpg
+037a.jpg	111a.jpg
+062a.jpg	187a.jpg
+147a.jpg	063a.jpg
+013a.jpg	023a.jpg
+167a.jpg	048a.jpg
+007a.jpg	142a.jpg
+119a.jpg	014a.jpg
+189a.jpg	177a.jpg
+163a.jpg	072a.jpg
+065a.jpg	073a.jpg
+030a.jpg	052a.jpg
+137a.jpg	113a.jpg
+018a.jpg	114a.jpg
+076a.jpg	090a.jpg
+141a.jpg	061a.jpg
+081a.jpg	077a.jpg
+188a.jpg	170a.jpg
+161a.jpg	039a.jpg
+157a.jpg	005a.jpg
+124a.jpg	162a.jpg
+038a.jpg	101a.jpg
+012a.jpg	040a.jpg
+151a.jpg	075a.jpg
+035a.jpg	153a.jpg
+069a.jpg	166a.jpg
+093a.jpg	131a.jpg
+104a.jpg	088a.jpg
+121a.jpg	047a.jpg
+097a.jpg	175a.jpg
+053a.jpg	051a.jpg
+154a.jpg	191a.jpg
+169a.jpg	096a.jpg
+050a.jpg	174a.jpg
+029a.jpg	055a.jpg
+102a.jpg	184a.jpg
+086a.jpg	135a.jpg
+044a.jpg	117a.jpg
+031a.jpg	146a.jpg
+107a.jpg	130a.jpg
+133a.jpg	126a.jpg
+060a.jpg	115a.jpg
+091a.jpg	087a.jpg
+160a.jpg	144a.jpg
+009a.jpg	001a.jpg
+064a.jpg	066a.jpg
+179a.jpg	058a.jpg
+011a.jpg	176a.jpg
+149a.jpg	139a.jpg
+185a.jpg	106a.jpg
+078a.jpg	074a.jpg
+002a.jpg	108a.jpg
+036a.jpg	070a.jpg
+158a.jpg	118a.jpg
+Test items
+Repeat	Lure	Foil
+192a.jpg	016b.jpg	105a.jpg
+128a.jpg	160b.jpg	140a.jpg
+064a.jpg	161b.jpg	024a.jpg
+023a.jpg	065b.jpg	059a.jpg
+039a.jpg	089b.jpg	103a.jpg
+170a.jpg	139b.jpg	120a.jpg
+124a.jpg	079b.jpg	092a.jpg
+012a.jpg	101b.jpg	045a.jpg
+186a.jpg	074b.jpg	148a.jpg
+157a.jpg	087b.jpg	159a.jpg
+048a.jpg	115b.jpg	138a.jpg
+113a.jpg	145b.jpg	182a.jpg
+015a.jpg	169b.jpg	134a.jpg
+102a.jpg	095b.jpg	021a.jpg
+123a.jpg	038b.jpg	042a.jpg
+155a.jpg	061b.jpg	056a.jpg
+067a.jpg	112b.jpg	084a.jpg
+168a.jpg	069b.jpg	099a.jpg
+136a.jpg	179b.jpg	068a.jpg
+007a.jpg	058b.jpg	171a.jpg
+081a.jpg	111b.jpg	127a.jpg
+147a.jpg	188b.jpg	004a.jpg
+046a.jpg	002b.jpg	164a.jpg
+040a.jpg	162b.jpg	100a.jpg
+096a.jpg	029b.jpg	129a.jpg
+158a.jpg	047b.jpg	132a.jpg
+163a.jpg	108b.jpg	033a.jpg
+152a.jpg	166b.jpg	178a.jpg
+104a.jpg	018b.jpg	190a.jpg
+037a.jpg	184b.jpg	085a.jpg
+009a.jpg	083b.jpg	165a.jpg
+175a.jpg	060b.jpg	020a.jpg
+076a.jpg	151b.jpg	156a.jpg
+149a.jpg	093b.jpg	125a.jpg
+066a.jpg	185b.jpg	057a.jpg
+144a.jpg	075b.jpg	122a.jpg
+091a.jpg	082b.jpg	041a.jpg
+119a.jpg	088b.jpg	172a.jpg
+005a.jpg	187b.jpg	183a.jpg
+014a.jpg	030b.jpg	017a.jpg
+167a.jpg	133b.jpg	109a.jpg
+086a.jpg	107b.jpg	043a.jpg
+077a.jpg	072b.jpg	025a.jpg
+052a.jpg	080b.jpg	181a.jpg
+117a.jpg	191b.jpg	010a.jpg
+126a.jpg	174b.jpg	028a.jpg
+053a.jpg	031b.jpg	027a.jpg
+011a.jpg	137b.jpg	098a.jpg
+035a.jpg	176b.jpg	022a.jpg
+051a.jpg	001b.jpg	173a.jpg
+114a.jpg	062b.jpg	019a.jpg
+142a.jpg	050b.jpg	026a.jpg
+118a.jpg	055b.jpg	054a.jpg
+070a.jpg	034b.jpg	008a.jpg
+180a.jpg	154b.jpg	150a.jpg
+153a.jpg	036b.jpg	049a.jpg
+146a.jpg	013b.jpg	116a.jpg
+141a.jpg	097b.jpg	032a.jpg
+106a.jpg	135b.jpg	003a.jpg
+078a.jpg	063b.jpg	006a.jpg
+090a.jpg	131b.jpg	071a.jpg
+044a.jpg	130b.jpg	110a.jpg
+177a.jpg	073b.jpg	143a.jpg
+121a.jpg	189b.jpg	094a.jpg
+O/S/N Test phase started at: Wed Dec 15 15:16:31 2021
+Trial	Img	Cond	LBin	Resp	Acc	RT
+1	016b	L	2	1	0	2653
+2	160b	L	2	1	0	2231
+3	161b	L	4	1	0	2618
+4	105a	F	0	2	0	2807
+5	192a	T	0	1	1	2649
+6	065b	L	2	3	0	2214
+7	089b	L	4	1	0	2019
+8	128a	T	0	1	1	3457
+9	140a	F	0	2	0	2257
+10	064a	T	0	1	1	1907
+11	023a	T	0	1	1	3118
+12	039a	T	0	1	1	2249
+13	024a	F	0	2	0	3056
+14	170a	T	0	1	1	2285
+15	139b	L	2	1	0	2821
+16	124a	T	0	1	1	2506
+17	012a	T	0	1	1	2247
+18	079b	L	2	1	0	2060
+19	059a	F	0	3	1	2621
+20	103a	F	0	2	0	3022
+21	101b	L	4	1	0	3906
+22	186a	T	0	1	1	2342
+23	157a	T	0	1	1	2336
+24	048a	T	0	1	1	2094
+25	074b	L	3	1	0	1935
+26	087b	L	1	2	1	2521
+27	115b	L	2	1	0	2933
+28	145b	L	3	1	0	2427
+29	120a	F	0	1	0	3015
+30	113a	T	0	1	1	4484
+31	092a	F	0	2	0	2588
+32	045a	F	0	1	0	2159
+33	169b	L	5	1	0	1977
+34	148a	F	0	1	0	2364
+35	015a	T	0	1	1	1971
+36	095b	L	3	1	0	2011
+37	038b	L	2	1	0	2622
+38	102a	T	0	1	1	1848
+39	123a	T	0	1	1	1847
+40	061b	L	1	3	0	3764
+41	155a	T	0	1	1	2840
+42	067a	T	0	1	1	2780
+43	168a	T	0	1	1	2348
+44	159a	F	0	2	0	2812
+45	136a	T	0	1	1	2338
+46	007a	T	0	3	0	2620
+47	112b	L	2	2	1	2815
+48	138a	F	0	1	0	2773
+49	069b	L	3	1	0	2225
+50	081a	T	0	1	1	2002
+51	182a	F	0	3	1	3259
+52	179b	L	4	2	1	2997
+53	134a	F	0	1	0	2319
+54	147a	T	0	1	1	1966
+55	058b	L	5	2	1	2218
+56	021a	F	0	2	0	2309
+57	042a	F	0	2	0	2308
+58	111b	L	4	2	1	2445
+59	188b	L	4	1	0	1755
+60	056a	F	0	1	0	3360
+61	046a	T	0	1	1	1729
+62	002b	L	1	1	0	2024
+63	084a	F	0	2	0	2334
+64	162b	L	4	1	0	3156
+65	029b	L	3	2	1	2809
+66	047b	L	5	1	0	2159
+67	099a	F	0	3	1	2706
+68	040a	T	0	1	1	2275
+69	068a	F	0	3	1	2771
+70	096a	T	0	1	1	2000
+71	108b	L	2	1	0	2675
+72	158a	T	0	1	1	3450
+73	171a	F	0	3	1	2583
+74	127a	F	0	3	1	2797
+75	004a	F	0	2	0	2890
+76	166b	L	5	1	0	2421
+77	164a	F	0	3	1	2744
+78	163a	T	0	1	1	2156
+79	018b	L	3	1	0	2249
+80	100a	F	0	3	1	2067
+81	184b	L	5	2	1	2685
+82	152a	T	0	1	1	2187
+83	104a	T	0	1	1	3517
+84	037a	T	0	1	1	2624
+85	009a	T	0	1	1	1944
+86	175a	T	0	1	1	2245
+87	129a	F	0	2	0	2620
+88	083b	L	2	3	0	2953
+89	060b	L	1	1	0	2678
+90	151b	L	5	3	0	2770
+91	132a	F	0	3	1	2772
+92	033a	F	0	3	1	3179
+93	076a	T	0	1	1	2151
+94	149a	T	0	2	0	3546
+95	178a	F	0	2	0	2439
+96	190a	F	0	3	1	2373
+97	093b	L	4	2	1	2649
+98	066a	T	0	3	0	2718
+99	085a	F	0	2	0	2710
+100	144a	T	0	1	1	2245
+101	091a	T	0	1	1	2099
+102	119a	T	0	1	1	2284
+103	185b	L	3	1	0	2096
+104	165a	F	0	3	1	3174
+105	020a	F	0	3	1	2892
+106	075b	L	4	3	0	2407
+107	156a	F	0	3	1	2261
+108	125a	F	0	3	1	3305
+109	005a	T	0	1	1	2250
+110	057a	F	0	2	0	2898
+111	122a	F	0	3	1	2979
+112	041a	F	0	3	1	2732
+113	014a	T	0	1	1	2310
+114	082b	L	4	2	1	2955
+115	088b	L	3	1	0	2455
+116	187b	L	5	1	0	2628
+117	172a	F	0	3	1	3136
+118	030b	L	3	2	1	2432
+119	183a	F	0	3	1	2431
+120	167a	T	0	3	0	3151
+121	133b	L	5	2	1	2802
+122	086a	T	0	1	1	2926
+123	017a	F	0	2	0	2712
+124	077a	T	0	1	1	3018
+125	107b	L	5	3	0	2868
+126	072b	L	1	1	0	3331
+127	080b	L	1	1	0	2198
+128	052a	T	0	1	1	2773
+129	117a	T	0	1	1	2316
+130	109a	F	0	2	0	2960
+131	191b	L	1	1	0	2487
+132	174b	L	2	1	0	2311
+133	043a	F	0	2	0	2753
+134	025a	F	0	2	0	2582
+135	126a	T	0	1	1	2279
+136	053a	T	0	1	1	2129
+137	031b	L	1	1	0	2202
+138	137b	L	4	3	0	3452
+139	176b	L	3	1	0	2399
+140	011a	T	0	1	1	2212
+141	035a	T	0	2	0	2617
+142	051a	T	0	1	1	3148
+143	181a	F	0	3	1	3450
+144	010a	F	0	2	0	2950
+145	028a	F	0	3	1	2839
+146	001b	L	1	1	0	2280
+147	114a	T	0	1	1	2499
+148	142a	T	0	1	1	2890
+149	062b	L	1	2	1	3052
+150	027a	F	0	3	1	2371
+151	050b	L	1	1	0	2931
+152	055b	L	2	3	0	3253
+153	098a	F	0	3	1	2165
+154	118a	T	0	1	1	3396
+155	034b	L	5	1	0	3416
+156	070a	T	0	1	1	2557
+157	022a	F	0	3	1	3326
+158	154b	L	5	2	1	3640
+159	173a	F	0	3	1	3372
+160	180a	T	0	3	0	4277
+161	036b	L	2	1	0	3668
+162	019a	F	0	3	1	2957
+163	153a	T	0	1	1	2624
+164	146a	T	0	3	0	2899
+165	141a	T	0	1	1	2868
+166	106a	T	0	1	1	2410
+167	026a	F	0	3	1	2930
+168	054a	F	0	3	1	4439
+169	008a	F	0	3	1	3427
+170	150a	F	0	3	1	2927
+171	049a	F	0	3	1	2745
+172	078a	T	0	1	1	2954
+173	013b	L	3	3	0	3517
+174	097b	L	5	1	0	2123
+175	116a	F	0	3	1	5201
+176	090a	T	0	1	1	2534
+177	032a	F	0	3	1	3642
+178	135b	L	4	1	0	2616
+179	003a	F	0	3	1	2793
+180	044a	T	0	1	1	2805
+181	063b	L	3	1	0	2652
+182	177a	T	0	1	1	2135
+183	131b	L	4	3	0	2124
+184	121a	T	0	1	1	2282
+185	006a	F	0	2	0	2747
+186	071a	F	0	2	0	2987
+187	130b	L	3	1	0	3482
+188	110a	F	0	3	1	5346
+189	143a	F	0	3	1	4622
+190	073b	L	1	3	0	2521
+191	094a	F	0	1	0	3027
+192	189b	L	5	1	0	2743
+
+
+Summary for 106 correct responses
+Corrected rates (Raw rates, raw counts)
+Old|Target	0.89 (0.89 57)
+Similar|Target	0.03 (0.03 2)
+New|Target	0.08 (0.08 5)
+Old|Lure	0.63 (0.63 40)
+Similar|Lure	0.20 (0.20 13)
+New|Lure	0.17 (0.17 11)
+Old|Foil	0.11 (0.11 7)
+Similar|Foil	0.33 (0.33 21)
+New|Foil	0.56 (0.56 36)
+Note, | means 'given', so Old | Lure means they said 'old' to a lure
+Raw rates are out of the total number of trials for that type, corrected for no-responses.
+
+Lure Bin Statistics (raw counts)
+L1O	L1S	L1N	L2O	L2S	L2N	L3O	L3S	L3N	L4O	L4S	L4N	L5O	L5S	L5N	LNR
+8	2	2	9	1	3	10	2	1	6	4	3	7	4	2
+L1-NR	L2-NR	L3-NR	L4-NR	L5-NR
+0	0	0	0	0
+
+Response totals (out of 64 expected)
+
+Target: 64
+Lure: 64
+Foil: 64
+
+
+Percent correct (corrected): 55.21
+
+Percent correct (raw): 55.21
+Bias metric (S|L-S|F): -12.50

@@ -1,0 +1,14 @@
+"0","## Effect size
+View(eta_squared(model1))
+"
+"1","Warning in "
+"1",""
+"1","View"
+"1",""
+"1"," :
+  "
+"1",""
+"1","Some CIs could not be estimated due to non-finite F, df, or df_error values."
+"1",""
+"1","
+"

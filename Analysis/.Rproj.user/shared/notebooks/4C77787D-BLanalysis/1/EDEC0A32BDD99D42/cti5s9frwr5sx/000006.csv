@@ -1,0 +1,6 @@
+"0","fa_cont_sum3 = fa_cont %>%
+  group_by(Position) %>%
+  summarise(mean(HitRate))
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"

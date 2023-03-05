@@ -1,0 +1,286 @@
+---
+title: "Additional analyses"
+output: html_notebook
+---
+```{r Setup, include=FALSE}
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(ggpubr)
+library(rlang)
+library(lme4) # For doing linear mixed modeling
+library(jtools) # For looking at lmer outputs
+library(lmerTest) # For looking at lmer outputs
+library(Hmisc) # For getting p-values for correlation matrix
+library(rstatix) # For running ANOVAs
+library(effectsize)
+library(emmeans)
+library(singcar)
+library(forcats)
+library(plotrix)
+library(ggsignif)
+library(car) # Gives an alternative anova tool
+library(nlme)
+```
+
+#Q1. How's BL's performance on items with "correct" similarity rating vs. "incorrect" items?
+
+```{r Perceptual similarity rating}
+smst_responses_all = read.csv("./smst_responses_similar.csv")
+rating_responses_all = read.csv("./similaritydata.csv")
+
+rating_responses = rating_responses_all %>%
+  filter(X != "Subject") %>%
+  select(!X.1 & !X.2)
+rating_responses = rename(rating_responses, Subjects = X)
+
+## Alphabetically order columns 
+smst_responses = smst_responses_all[, order(names(smst_responses_all))]
+smst_responses = smst_responses[,c(ncol(smst_responses),1:(ncol(smst_responses)-1))]
+
+## Get BL's similarity response
+bl_rating = filter(rating_responses, Subjects == 0)
+smst_responses = rbind(smst_responses, bl_rating)
+colnames(smst_responses) = colnames(rating_responses)
+smst_responses[length(smst_responses$Subjects),1] = "Rating"
+
+long_df = smst_responses[1:13, ] %>%
+  pivot_longer(starts_with("SoundMST"), names_to = "Sound", values_to = "Correct")
+ratings = smst_responses[14, ] %>%
+  pivot_longer(starts_with("SoundMST"), names_to = "Sound", values_to = "Rating")
+long_df = cbind(ratings[, 3], long_df)
+
+## Calculate average accuracy for similar
+mean_acc = long_df %>%
+  group_by(Subjects) %>%
+  summarise(mean = mean(as.numeric(Correct)))
+
+low_sim_mean = long_df %>%
+  filter(Subjects == 0 & Rating != 4) %>%
+  group_by(Subjects) %>%
+  summarise(mean = mean(as.numeric(Correct)))
+  
+high_sim_mean = long_df %>%
+  filter(Subjects == 0 & Rating == 4) %>%
+  group_by(Subjects) %>%
+  summarise(mean = mean(as.numeric(Correct)))
+
+# Remove coin sound
+nocoin = long_df %>%
+  filter(Sound != "SoundMST.Coin_D.wav") %>%
+  group_by(Subjects) %>%
+  summarise(mean = mean(as.numeric(Correct)))
+
+mean(nocoin$mean[2:13])
+mean(mean_acc$mean[2:13])
+
+```
+A.
+--> Of all 24 Similar trials, BL correctly labeled them as "New" 25% of the time (6 out of 24)
+--> When sounds that he couldn't perceptually differentiate were removed, leaving 17 sounds, his accuracy was 23.5% (4 out of 17)
+--> With only sounds that he couldn't perceptually differentiate (7), his accuracy was 28.6% (2 out of 7)
+--> I.e. BL answered 6 items correctly. Of the 6 items, 2 were later judged as "exactly the same", and 4 were later judged as "similar"
+--> BL rated 17 of 24 sounds as "similar" and 7 as "exactly the same", but labeled only 6 sounds as being different and remaining 18 as being same as previous sound. Perceptual discrimination was still easier for BL than mnemonic discrimination 
+
+#Q2. Statistical analysis for similarity ratings? Is BL statistically more likely to judge two lures as being the same?
+-> comparison of percentage yields significant difference
+-> comparison of ratio doesn't yield sig. difference
+```{r}
+rating_responses = rating_responses %>%
+  pivot_longer(starts_with("SoundMST"), names_to = "Sounds", values_to = "Rating")
+
+####### 1. What is the mean similarity rating for controls and BL? ###############
+meanRating = rating_responses %>%
+  filter(Subjects != 0) %>%
+  group_by(Subjects) %>%
+  summarise(mean=mean(as.numeric(Rating)))
+mean(meanRating$mean)
+
+blRating = rating_responses %>%
+  filter(Subjects == 0) %>%
+  group_by(Subjects) %>%
+  summarise(mean=mean(as.numeric(Rating)))
+mean(blRating$mean)
+
+####### 2. What is the proportion of lures given a rating of 4 for controls and BL? ########
+View(filter(rating_responses, Subjects != 0 & Rating == 4))
+ratioRating = rating_responses %>%
+  #filter(Subjects != 0) %>%
+  group_by(Subjects) %>%
+  summarise(count = sum(Rating == 4), ratio = sum(Rating == 4)/24) %>%
+  as.data.frame() 
+  View()
+bl_ratio = filter(ratioRating, Subjects == 0)
+cont_ratio = filter(ratioRating, Subjects != 0)
+TD(bl_ratio$ratio, cont_ratio$ratio, alternative="two.sided")
+
+```
+
+
+R3. Does WMST performance get worse toward the end of the task? Are they more likely to endorse a lure as Old on it's 5th occurrence than 1st occurrence?
+-> include item occurrence as a part of trial file
+-> of the 25 lures, see if word group predicts accuracy, see if occurrence predicts accuracy
+```{r}
+wmst_responses_all = read.csv("./wmst_responses.csv")
+wmst_long = wmst_responses_all[4:16, ] %>%
+  pivot_longer(starts_with("TestWords"), names_to = "Words", values_to = "Correct") 
+types_long = wmst_responses_all[1, ] %>%
+  pivot_longer(starts_with("TestWords"), names_to = "Words", values_to = "Type") %>%
+  pivot_wider(names_from = "Subject", values_from = "Type")
+occ_long = wmst_responses_all[2, ] %>%
+  pivot_longer(starts_with("TestWords"), names_to = "Words", values_to = "Type") %>%
+  pivot_wider(names_from = "Subject", values_from = "Type")
+trial_long = wmst_responses_all[3, ] %>%
+  pivot_longer(starts_with("TestWords"), names_to = "Words", values_to = "Type") %>%
+  pivot_wider(names_from = "Subject", values_from = "Type")
+
+wmst_long = cbind(trial_long[, 2], wmst_long)
+colnames(wmst_long)[1] = "Trial"
+colnames(wmst_long)[2] = "Occurrence"
+colnames(wmst_long)[3] = "Sim_type"
+
+
+wmst_accuracy = wmst_long %>%
+  group_by(Subject) %>%
+  summarise(mean = mean(as.numeric(Correct)))
+
+sim_accuracy = wmst_long %>%
+  filter(Sim_type != "na") %>%
+  group_by(Subject) %>%
+  summarise(mean = mean(as.numeric(Correct)))
+
+
+wmst_simonly = wmst_long %>%
+  filter(Sim_type != "na") %>%
+  select(!Words)
+
+wmst_simonly_acc = wmst_simonly %>%
+  group_by(Occurrence) %>%
+  summarise(mean = mean(as.numeric(Correct)))
+
+ggplot(wmst_simonly_acc, aes(x=Occurrence, y=mean)) +
+  geom_bar(stat="identity")
+
+online_responses = read.csv("./online_responses.csv")
+online_responses = online_responses[, 1:4]
+online_responses$Subject = online_responses$Subject + 20
+trials = data.frame(Trial = c(1:100))
+online_responses = cbind(online_responses, trials)
+
+combined = rbind(select(wmst_long, !Words), online_responses)
+combined_simonly = combined %>%
+  filter(Occurrence != "na")
+
+######## Get BL's average accuracy per occurrence ###########
+bl_combined_simonly_average =  combined_simonly %>%
+  filter(Subject == 0) %>%
+  group_by(Occurrence) %>%
+  summarise(BL = mean(as.numeric(Correct)))
+
+######## Get controls' average accuracy per occurrence ###########
+cont_combined_simonly_average = combined_simonly %>%
+  filter(Subject != 0) %>%
+  group_by(Occurrence) %>%
+  summarise(Controls = mean(as.numeric(Correct)))
+
+both_simonly = cbind(cont_combined_simonly, bl_combined_simonly$bl) %>%
+  pivot_longer(c("bl_combined_simonly$bl", "controls"), names_to = 'Group', values_to = 'Accuracy')
+
+######## Plot both BL and controls' average accuracy per occurrence ###########
+ggplot(both_simonly, aes(x=Occurrence, y=Accuracy, group = Group)) +
+  geom_bar(stat="identity", position="dodge", aes(fill=Group), color="black") +
+  scale_fill_manual(labels = c("BL", "Controls"), values = c("red", "white")) +
+  theme_bw(base_size = 11)
+
+```
+#Replot MST accuracy as "old" response rate
+```{r Logistic regression}
+#################################### Prepare data set #####################################
+cont_simonly = combined_simonly %>%
+  filter(Subject != 0)
+bl_simonly = combined_simonly %>%
+  filter(Subject == 0)
+bl_simonly$Correct = factor(bl_simonly$Correct)
+cont_simonly$Correct = factor(bl_simonly$Correct)
+
+################################ Run logistic regression ##################################
+bllogit = glm(Correct ~ Sim_type + Occurrence + as.numeric(Trial), data=bl_simonly, family="binomial")
+summary(bllogit)
+aod::wald.test(b = coef(bllogit), Sigma = vcov(bllogit), Terms = 5:8)
+
+contlogit = glm(Correct ~ Sim_type + Occurrence + as.numeric(Trial), data=cont_simonly, family="binomial")
+summary(contlogit)
+aod::wald.test(b = coef(contlogit), Sigma = vcov(contlogit), Terms = 5:8)
+
+```
+
+```{r}
+orig.rt2 = as.data.frame(read.csv("./RTs_test.csv", fileEncoding="UTF-8-BOM"))
+orig.rt2$RT = orig.rt2$RT*1000
+orig.rt2 = orig.rt2 %>%
+  mutate(Trial_n = ifelse(orig.rt2$RT > 1140, Trial-3,
+                          ifelse(orig.rt2$RT > 760, Trial-2,
+                                 ifelse(orig.rt2$RT > 380, Trial-1, Trial))))
+# SL: Target detection (Reaction time)
+rt_cont2 = filter(orig.rt2, Subject != 0)
+rt_bl2 = filter(orig.rt2, Subject == 0)
+# ------------------------------- Position effect ----------------------------------- #
+# BL
+# 1. Using anova(lm)(between)
+bl_rt2 = lm(RT ~ as.factor(Position)+as.numeric(Trial_n), data=rt_bl2)
+anova(bl_rt2)
+# Effect size
+View(eta_squared(bl_rt2))
+
+# 2. Using anova_test (within)
+View(anova(lme(RT ~ as.factor(Position) + as.numeric(Trial_n), random = ~1|Subject, data = rt_bl2)))
+
+# Controls
+# 1. Using anova(lm) (within)
+cont_rt2 = lmer(RT ~ as.factor(Position)+as.numeric(Trial_n) + (1|Subject), data=rt_cont2)
+anova(cont_rt2)
+# Effect size
+View(eta_squared(cont_rt2))
+# Pairwise comparison
+emmeans(cont_rt2, list(pairwise ~ as.factor(Position) + as.numeric(Trial_n)), adjust="bonferroni")
+
+# 2. Using anova_test (within)
+anova(lme(RT ~ as.factor(Position) + as.numeric(Trial_n), random = ~1|Subject, data = rt_cont2))
+
+ggplot(rt_cont2, aes(x=Trial_n, y=RT))+
+  #geom_line(stat="identity")
+  geom_smooth(method="lm")
+```
+
+```{r Target Detection - Linear contrast}
+# Contrast the Position levels
+c1 <- c(-1, 0, 1)
+c2 <- c(-1, 0.5, 0.5)
+## combined the above 2 lines into a matrix
+mat <- cbind(c1,c2)
+
+# Controls
+## tell R that the matrix gives the contrasts you want
+rt_cont$Position = as.factor(rt_cont$Position)
+contrasts(rt_cont$Position) <- mat
+
+## Fit a mixed effects ANOVA and run polynomial contrasts
+model1 <- aov(RT ~ Position + Trial_n + Error(Subject), data = rt_cont2)
+summary(model1)
+summary(model1, split=list(Position=list("Linear"=1, "Quadratic" = 2)))
+## Effect size
+View(eta_squared(model1))
+
+# BL
+## tell R that the matrix gives the contrasts you want
+rt_bl$Position = as.factor(rt_bl$Position)
+contrasts(rt_bl$Position) <- mat
+
+## Fit a mixed effects ANOVA and run polynomial contrasts
+model2 <- aov(RT ~ Position + Trial_n, data = rt_bl2)
+summary(model2, split=list(Position=list("Linear"=1, "Quadratic" = 2)))
+## Effect size
+View(eta_squared(model2))
+```
+
+

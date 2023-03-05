@@ -1,0 +1,17 @@
+"0","ggplot(data = filter(orig.mst, Subject < 50), aes(x = """", y = w_Rcg)) +
+  geom_boxplot(fill='white', width=.5) +
+  geom_dotplot(binaxis = ""y"", stackgroups = TRUE, stackdir = ""center"", aes(fill = Type),
+               dotsize = 1.5) +
+  scale_fill_manual(values = c(""red"", ""white"",""light grey"")) +
+  theme_bw(base_size = 12) +
+  theme(legend.position = (""none""), plot.title.position = ""plot"") +
+  ylab(""Recognition (d')"") +
+  xlab("""") +
+  ggtitle(""B"") +
+  scale_y_continuous(labels = scales::number_format(accuracy = 0.1,
+                                 decimal.mark = '.'))
+"
+"2","geom_dotplot called with stackgroups=TRUE and method=""dotdensity"". You probably want to set binpositions=""all""
+"
+"2","Bin width defaults to 1/30 of the range of the data. Pick better value with `binwidth`.
+"

@@ -1,0 +1,2125 @@
+"0","# ------------------------------- 1. T.test comparison --------------------- #"
+"0","TD(sl_bl$RT.Effect, sl_cont$RT.Effect)"
+"1","
+"
+"1","	Test of Deficit"
+"1","
+"
+"1","
+"
+"1","data:  "
+"1",""
+"1","Case = 0.13, Controls (m = 0.06, sd = 0.08, n = 26)"
+"1",""
+"1","
+"
+"1","t = 0.91163, df = 25, p-value = 0.8147"
+"1","
+"
+"1","alternative hypothesis: "
+"1","true "
+"1",""
+"1","diff. between case and controls"
+"1",""
+"1"," is "
+"1",""
+"1","less than"
+"1",""
+"1"," "
+"1",""
+"1","0"
+"1",""
+"1","
+"
+"1","sample estimates:
+"
+"1","     Std. case score (Z-CC), 95% CI [0.46, 1.39] "
+"1","Proportion below case (%), 95% CI [67.73, 91.71] "
+"1","
+"
+"1","                                       0.9290001 "
+"1","                                      81.4665668 "
+"1","
+"
+"1","
+"
+"0","# Group difference in RT Score"
+"0","t.test(RT.Effect ~ Type, data=sl_cont, var.equal = TRUE)"
+"1","
+"
+"1","	Two Sample t-test"
+"1","
+"
+"1","
+"
+"1","data:  "
+"1",""
+"1","RT.Effect by Type"
+"1",""
+"1","
+"
+"1","t = 0.49845, df = 24, p-value = 0.6227"
+"1","
+"
+"1","alternative hypothesis: "
+"1","true "
+"1",""
+"1","difference in means"
+"1",""
+"1"," is "
+"1",""
+"1","not equal to"
+"1",""
+"1"," "
+"1",""
+"1","0"
+"1",""
+"1","
+"
+"1","95"
+"1",""
+"1"," percent confidence interval:
+"
+"1",""
+"1"," "
+"1",""
+"1","-0.04920669  0.08054212"
+"1",""
+"1","
+"
+"1","sample estimates:
+"
+"1","  mean in group Control "
+"1","mean in group Control-O "
+"1","
+"
+"1","             0.07082788 "
+"1","             0.05516017 "
+"1","
+"
+"1","
+"
+"0","# ---------------------------- 2. Monte Carlo simulation ------------------------------ #"
+"0","# Scramble BL's data across syllable positions and generate a null distribution of RT scores. Repeat this 1000 times."
+"0","null_scores = data.frame(score = numeric(1000), count = numeric(1000))"
+"0","c = 1"
+"0","for(i in 1:1000){"
+"0","  bl_shuffled=transform(rt_bl, RT = sample(RT)) # Shuffles column RT"
+"0","  bl_shuffled = bl_shuffled %>%"
+"0","    group_by(Position) %>%"
+"0","    summarise(mean = mean(RT)) "
+"0","  rt_score = (bl_shuffled[1, 2] - bl_shuffled[3, 2]) / bl_shuffled[1, 2]"
+"0","  null_scores[c, ] = c(rt_score, c)"
+"0","  c = c+1"
+"0","}"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"1","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"0","# What's the percentile of BL's original RT prediction score on this null distribution?"
+"0","percentile = ecdf(null_scores$score)"
+"0","percentile(sl_bl$RT.Effect)"
+"1","[1]"
+"1"," 0.998"
+"1","
+"
+"0","# Visualize"
+"0","ggplot(null_scores)+"
+"0","  geom_point(aes(x=0, y=score)) +"
+"0","  geom_boxplot(aes(y=score))"
